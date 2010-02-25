@@ -60,9 +60,9 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 	private final Provider<Style> styleProvider;
 
 	@Inject
-	public JasperReportProcessorForModel(Provider<EOEditingContext> editingContextProvider, Provider<ERXLocalizer> localizerProvider, Provider<DynamicReportBuilder> builderProvider, Provider<Style> styleProvider, @Nullable ReportProcessor nextProcessor)
+	public JasperReportProcessorForModel( final Provider<EOEditingContext> editingContextProvider, final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider, @Nullable final ReportProcessor nextProcessor )
 	{
-		super(nextProcessor);
+		super( nextProcessor );
 
 		this.editingContextProvider = editingContextProvider;
 		this.localizerProvider = localizerProvider;
@@ -71,47 +71,47 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 	}
 
 	@Override
-	protected byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
 	{
-		if(model.baseEntity() == null)
+		if( model.baseEntity() == null )
 		{
 			return null;
 		}
 
 		DynamicReportBuilder builder = builderProvider.get();
 
-		builder.setTitle(model.title()).setSubtitle(model.subtitle());
+		builder.setTitle( model.title() ).setSubtitle( model.subtitle() );
 
 		EOEntity entity = model.baseEntity();
 
-		for(ReportColumn column : model.columns())
+		for( ReportColumn column : model.columns() )
 		{
-			EOAttribute attribute = entity._attributeForPath(column.keypath());
+			EOAttribute attribute = entity._attributeForPath( column.keypath() );
 
-			if(attribute == null)
+			if( attribute == null )
 			{
-				throw new ReportProcessingException("Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling.");
+				throw new ReportProcessingException( "Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling." );
 			}
 
 			String classname = attribute.adaptorValueClass().getName();
 
-			if(NSTimestamp.class.getName().equals(classname))
+			if( NSTimestamp.class.getName().equals( classname ) )
 			{
 				classname = Date.class.getName();
 			}
 
-			String columnTitle = titleForColumn(entity, column);
+			String columnTitle = titleForColumn( entity, column );
 
-			ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(column.pattern());
+			ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty( column.keypath(), classname ).setTitle( columnTitle ).setPattern( column.pattern() );
 
-			if(column.width() != null)
+			if( column.width() != null )
 			{
-				columnBuilder.setWidth(column.width());
-				columnBuilder.setFixedWidth(false);
+				columnBuilder.setWidth( column.width() );
+				columnBuilder.setFixedWidth( false );
 			}
 
-			processColumnStyle(column, columnBuilder, classname);
-			processCustomExpression(column, columnBuilder, builder);
+			processColumnStyle( column, columnBuilder, classname );
+			processCustomExpression( column, columnBuilder, builder );
 
 			AbstractColumn djColumn = null;
 
@@ -119,121 +119,124 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 			{
 				djColumn = columnBuilder.build();
 			}
-			catch(ColumnBuilderException exception)
+			catch( ColumnBuilderException exception )
 			{
-				throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
+				throw new ReportProcessingException( "An unexpected error occurred while trying to build the report.", exception );
 			}
 
-			if(column.hidden())
+			if( column.hidden() )
 			{
-				builder.addField(column.title(), classname);
+				builder.addField( column.title(), classname );
 			}
 			else
 			{
-				builder.addColumn(djColumn);
+				builder.addColumn( djColumn );
 			}
 
-			if(column.groupedBy())
+			if( column.groupedBy() )
 			{
 				GroupBuilder groupBuilder = new GroupBuilder();
 
-				DJGroup group = groupBuilder.setCriteriaColumn((PropertyColumn) djColumn).setGroupLayout(GroupLayout.VALUE_IN_HEADER_WITH_HEADERS).build();
+				DJGroup group = groupBuilder.setCriteriaColumn( (PropertyColumn) djColumn ).setGroupLayout( GroupLayout.VALUE_IN_HEADER_WITH_HEADERS ).build();
 
-				builder.addGroup(group);
+				builder.addGroup( group );
 
-				builder.setPrintColumnNames(false);
+				builder.setPrintColumnNames( false );
 			}
 		}
 
 		DynamicReport dr = builder.build();
 
-		JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(additionalSortOrderings));
+		JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( additionalSortOrderings ) );
 
 		try
 		{
-			JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), dataSource);
+			JasperPrint print = DynamicJasperHelper.generateJasperPrint( dr, new ClassicLayoutManager(), dataSource );
 
-			return JasperExportManager.exportReportToPdf(print);
+			return JasperExportManager.exportReportToPdf( print );
 		}
-		catch(JRException exception)
+		catch( JRException exception )
 		{
-			throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
+			throw new ReportProcessingException( "An unexpected error occurred while trying to build the report.", exception );
 		}
 	}
 
-	private void processColumnStyle(ReportColumn column, ColumnBuilder columnBuilder, String classname) throws ReportProcessingException
+	private void processColumnStyle( final ReportColumn column, final ColumnBuilder columnBuilder, final String classname ) throws ReportProcessingException
 	{
 		Style style = styleProvider.get();
 
-		style.getFont().setFontSize(8);
+		style.getFont().setFontSize( 8 );
 
-		if(column.fontSize() != null && column.fontSize().length() > 0)
+		if( column.fontSize() != null && column.fontSize().length() > 0 )
 		{
 			try
 			{
-				style.getFont().setFontSize(Integer.parseInt(column.fontSize().trim().replace("pt", "").replace("px", "")));
-				style.getFont().setPdfFontEmbedded(true);
+				style.getFont().setFontSize( Integer.parseInt( column.fontSize().trim().replace( "pt", "" ).replace( "px", "" ) ) );
+				style.getFont().setPdfFontEmbedded( true );
 			}
-			catch(Exception e)
+			catch( Exception e )
 			{
-				throw new ReportProcessingException("Ocorreu um erro ao gerar o relat\u00f3rio: Tamanho da fonte deve ser num\u00e9rico", e);
+				throw new ReportProcessingException( "Ocorreu um erro ao gerar o relat\u00f3rio: Tamanho da fonte deve ser num\u00e9rico", e );
 			}
 		}
 
-		if(column.fontColor() != null && column.fontColor().length() > 0)
+		if( column.fontColor() != null && column.fontColor().length() > 0 )
 		{
 			try
 			{
-				style.setTextColor(new Color(Integer.parseInt(column.fontColor().replace("#", ""), 16)));
+				style.setTextColor( new Color( Integer.parseInt( column.fontColor().replace( "#", "" ), 16 ) ) );
 			}
-			catch(Exception e)
+			catch( Exception e )
 			{
-				throw new ReportProcessingException("Ocorreu um erro ao gerar o relat\u00f3rio: A cor da fonte deve ser informada em HexaDecimal v\u00e1lido Ex: #FF0000", e);
+				throw new ReportProcessingException( "Ocorreu um erro ao gerar o relat\u00f3rio: A cor da fonte deve ser informada em HexaDecimal v\u00e1lido Ex: #FF0000", e );
 			}
 		}
 
-		if(column.alignment() != null && column.alignment().equals("C"))
+		switch( column.alignment() )
 		{
-			style.setHorizontalAlign(HorizontalAlign.CENTER);
-		}
-		else if(column.alignment() != null && column.alignment().equals("R"))
-		{
-			style.setHorizontalAlign(HorizontalAlign.RIGHT);
-		}
-		else
-		{
-			style.setHorizontalAlign(HorizontalAlign.LEFT);
+			case CENTER:
+				style.setHorizontalAlign( HorizontalAlign.CENTER );
+				break;
+
+			case RIGHT:
+				style.setHorizontalAlign( HorizontalAlign.RIGHT );
+				break;
+
+			case LEFT:
+			default:
+				style.setHorizontalAlign( HorizontalAlign.LEFT );
+				break;
 		}
 
-		if(BigDecimal.class.getName().equals(classname))
+		if( BigDecimal.class.getName().equals( classname ) )
 		{
 			Style red;
 
 			try
 			{
-				red = (Style) BeanUtils.cloneBean(style);
-				// TODO: Verificar por que ao adicionar um ConditionalStyle a
-				// CustomExpression é executada duas vezes
+				red = (Style) BeanUtils.cloneBean( style );
+				// TODO: Check why the CustomExpression is executed twice if the
+				// ConditionalStyle is added.
 				// columnBuilder.addConditionalStyle(new ConditionalStyle(new
 				// AmmountCondition(), red));
 			}
-			catch(Exception e)
+			catch( Exception e )
 			{
-				throw new ReportProcessingException("Erro ao gerar relat\u00f3rio", e);
+				throw new ReportProcessingException( "Erro ao gerar relat\u00f3rio", e );
 			}
 
-			red.setTextColor(Color.RED);
+			red.setTextColor( Color.RED );
 
 		}
 
-		columnBuilder.setStyle(style);
+		columnBuilder.setStyle( style );
 	}
 
-	private void processCustomExpression(ReportColumn column, ColumnBuilder columnBuilder, DynamicReportBuilder reportBuilder) throws ReportProcessingException
+	private void processCustomExpression( final ReportColumn column, final ColumnBuilder columnBuilder, final DynamicReportBuilder reportBuilder ) throws ReportProcessingException
 	{
 		Class<CustomExpression> customExpressionClass = column.customExpressionClass();
 
-		if(customExpressionClass == null)
+		if( customExpressionClass == null )
 		{
 			return;
 		}
@@ -244,35 +247,35 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 		{
 			customExpression = customExpressionClass.newInstance();
 		}
-		catch(Exception exception)
+		catch( Exception exception )
 		{
-			throw new ReportProcessingException(exception);
+			throw new ReportProcessingException( exception );
 		}
 
-		columnBuilder.setColumnProperty(null);
-		columnBuilder.setCustomExpression(customExpression);
+		columnBuilder.setColumnProperty( null );
+		columnBuilder.setCustomExpression( customExpression );
 
 		EOEntity entity = column.model().baseEntity();
 
-		String classname = entity._attributeForPath(column.keypath()).className();
+		String classname = entity._attributeForPath( column.keypath() ).className();
 
-		reportBuilder.addField(column.keypath(), classname);
+		reportBuilder.addField( column.keypath(), classname );
 	}
 
-	private String titleForColumn(EOEntity entity, ReportColumn column)
+	private String titleForColumn( final EOEntity entity, final ReportColumn column )
 	{
 		String key = column.title();
 
-		if(key == null)
+		if( key == null )
 		{
 			LocalizerKeyGenerator generator = new LocalizerKeyGenerator();
 
-			key = generator.generateKey(entity, column.keypath());
+			key = generator.generateKey( entity, column.keypath() );
 		}
 
 		ERXLocalizer localizer = localizerProvider.get();
 
-		String title = (String) localizer.valueForKey(key);
+		String title = (String) localizer.valueForKey( key );
 
 		return title == null ? key : title;
 	}
