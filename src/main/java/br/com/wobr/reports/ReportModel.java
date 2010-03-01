@@ -1,5 +1,7 @@
 package br.com.wobr.reports;
 
+import java.net.URL;
+
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
@@ -22,4 +24,6 @@ public interface ReportModel
 	public String subtitle();
 
 	public String title();
+
+	public URL iReportTemplate();
 }
