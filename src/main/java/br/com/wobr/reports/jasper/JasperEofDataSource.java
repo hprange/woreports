@@ -22,13 +22,13 @@ import com.webobjects.foundation.NSKeyValueCoding;
  * same pattern used for keypath navigation.
  * <p>
  * If you have a model like this:
- * 
+ *
  * <pre>
  * EntityA        ->      EntityB
  *   |-attributeA           |-attributeB
  *   `-relationshipToB
  * </pre>
- * 
+ *
  * You can map the following fields:
  * <ul>
  * <li>attributeA</li>
@@ -37,7 +37,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
  * <p>
  * The raw row option is activated while fetching data to reduce memory
  * consumption.
- * 
+ *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 public class JasperEofDataSource implements JRDataSource
@@ -92,7 +92,11 @@ public class JasperEofDataSource implements JRDataSource
 	{
 		NSDictionary<String, ? extends Object> row = resultSet().objectAtIndex(index);
 
+		System.out.println("Field: " + field.getName());
+
 		Object value = row.valueForKeyPath(field.getName());
+
+		System.out.println("Value: " + value);
 
 		if(value == NSKeyValueCoding.NullValue)
 		{
@@ -112,7 +116,7 @@ public class JasperEofDataSource implements JRDataSource
 	/**
 	 * Fetch records according to the entityName, qualifier and sortOrderings
 	 * specified.
-	 * 
+	 *
 	 * @return The set of objects found
 	 */
 	@SuppressWarnings("unchecked")
@@ -130,6 +134,8 @@ public class JasperEofDataSource implements JRDataSource
 			}
 
 			resultSet = editingContext.objectsWithFetchSpecification(fetchSpecification);
+
+			System.out.println("result set: " + resultSet);
 		}
 
 		return resultSet;

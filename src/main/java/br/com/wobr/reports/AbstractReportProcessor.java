@@ -20,12 +20,12 @@ public abstract class AbstractReportProcessor implements ReportProcessor
 
 	public final byte[] process(Format format, ReportModel model) throws ReportProcessingException
 	{
-		return process(format, model, null, null);
+		return process(format, model, null, NSArray.<EOSortOrdering>emptyArray());
 	}
 
 	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier) throws ReportProcessingException
 	{
-		return process(format, model, qualifier, null);
+		return process(format, model, qualifier, NSArray.<EOSortOrdering>emptyArray());
 	}
 
 	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings) throws ReportProcessingException
