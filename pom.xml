@@ -26,12 +26,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.webobjects</groupId>
-			<artifactId>JavaWebObjects</artifactId>
+			<artifactId>JavaEOAccess</artifactId>
 			<version>${webobjects.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.webobjects</groupId>
-			<artifactId>JavaEOAccess</artifactId>
+			<artifactId>JavaEOControl</artifactId>
 			<version>${webobjects.version}</version>
 		</dependency>
 		<dependency>
@@ -65,6 +65,11 @@
 			<version>2.4</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
@@ -80,6 +85,12 @@
 			<groupId>org.wounittest</groupId>
 			<artifactId>wounittest</artifactId>
 			<version>2.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest-core</artifactId>
+			<version>1.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
