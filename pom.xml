@@ -14,7 +14,7 @@
 	<name>WOBR Reports Framework</name>
 
 	<properties>
-		<wonder.version>5.0.0-SNAPSHOT</wonder.version>
+		<wonder.version>5.0.0-r10702</wonder.version>
 	</properties>
 
 	<dependencies>
