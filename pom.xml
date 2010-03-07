@@ -10,7 +10,7 @@
 
 	<artifactId>wobr-reports</artifactId>
 	<packaging>woframework</packaging>
-	<version>0.3</version>
+	<version>0.4-SNAPSHOT</version>
 	<name>WOBR Reports Framework</name>
 
 	<properties>
@@ -100,9 +100,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
-  <scm>
-    <connection>scm:svn:http://wobr.googlecode.com/svn/wobr-parent/tags/wobr-reports-0.3</connection>
-    <developerConnection>scm:svn:https://wobr.googlecode.com/svn/wobr-parent/tags/wobr-reports-0.3</developerConnection>
-  </scm>
 </project>
