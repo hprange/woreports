@@ -10,7 +10,7 @@
 
 	<artifactId>wobr-reports</artifactId>
 	<packaging>woframework</packaging>
-	<version>1.0-SNAPSHOT</version>
+	<version>0.3-SNAPSHOT</version>
 	<name>WOBR Reports Framework</name>
 
 	<properties>
