@@ -1,6 +1,9 @@
 package br.com.wobr.reports.jasper;
 
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -40,7 +43,7 @@ public class JasperReportProcessorForIReport extends AbstractReportProcessor
 	}
 
 	@Override
-	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings, Map<String,Object> params ) throws ReportProcessingException
 	{
 		byte[] data = null;
 
@@ -63,10 +66,19 @@ public class JasperReportProcessorForIReport extends AbstractReportProcessor
 				keypaths.add( field.getName() );
 			}
 
+
+
+
+			params.put("valorSaldoInicial", new BigDecimal(1070.00));
+			params.put("periodo", "de 10/02/2010 a 10/03/2010");
+			params.put("banco", "Santander");
+
+
 			JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( additionalSortOrderings ) );
 
+
 			// Cria o JasperPrint
-			print = JasperFillManager.fillReport( jasperReport, null, dataSource );
+			print = JasperFillManager.fillReport( jasperReport, params, dataSource );
 
 			data = JasperExportManager.exportReportToPdf( print );
 

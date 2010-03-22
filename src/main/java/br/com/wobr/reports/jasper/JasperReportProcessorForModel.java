@@ -3,6 +3,7 @@ package br.com.wobr.reports.jasper;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -71,7 +72,7 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 	}
 
 	@Override
-	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params ) throws ReportProcessingException
 	{
 		if( model.baseEntity() == null )
 		{

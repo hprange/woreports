@@ -1,5 +1,7 @@
 package br.com.wobr.reports.jasper;
 
+import java.util.Map;
+
 import net.sf.jasperreports.engine.JasperPrint;
 import br.com.wobr.reports.AbstractReportProcessor;
 import br.com.wobr.reports.Format;
@@ -41,7 +43,7 @@ public class JasperReportProcessorForJava extends AbstractReportProcessor
 	}
 
 	@Override
-	protected byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings) throws ReportProcessingException
+	protected byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params) throws ReportProcessingException
 	{
 		Class<? extends ReportTemplate<?>> templateClass = model.javaClassTemplate();
 
