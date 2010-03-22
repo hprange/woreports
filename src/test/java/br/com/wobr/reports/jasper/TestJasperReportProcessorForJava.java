@@ -25,7 +25,7 @@ import com.google.inject.Provider;
 
 /**
  * TODO: Generate empty PDF
- * 
+ *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 @RunWith(MockitoJUnitRunner.class)
@@ -69,7 +69,7 @@ public class TestJasperReportProcessorForJava
 		Mockito.doReturn(mockTemplate.getClass()).when(mockModel).javaClassTemplate();
 		Mockito.doReturn(mockTemplate).when(processor).objectForClass((Class<? extends ReportTemplate<?>>) mockTemplate.getClass());
 
-		processor.handleProcessing(Format.PDF, mockModel, null, null);
+		processor.handleProcessing(Format.PDF, mockModel, null, null,null);
 
 		Mockito.verify(mockTemplate).build(mockModel);
 		Mockito.verify(mockExporter).export(Mockito.any(JasperPrint.class));
@@ -80,7 +80,7 @@ public class TestJasperReportProcessorForJava
 	{
 		Mockito.doReturn(null).when(mockModel).javaClassTemplate();
 
-		byte[] result = processor.handleProcessing(Format.PDF, mockModel, null, null);
+		byte[] result = processor.handleProcessing(Format.PDF, mockModel, null, null,null);
 
 		assertThat(result, nullValue());
 	}
