@@ -1,5 +1,7 @@
 package br.com.wobr.reports;
 
+import java.util.Map;
+
 import com.webobjects.eocontrol.EOQualifier;
 import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
@@ -16,21 +18,21 @@ public abstract class AbstractReportProcessor implements ReportProcessor
 		this.nextProcessor = nextProcessor;
 	}
 
-	protected abstract byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings) throws ReportProcessingException;
+	protected abstract byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params) throws ReportProcessingException;
 
-	public final byte[] process(Format format, ReportModel model) throws ReportProcessingException
+	public final byte[] process(Format format, ReportModel model,Map<String,Object> params) throws ReportProcessingException
 	{
-		return process(format, model, null, NSArray.<EOSortOrdering>emptyArray());
+		return process(format, model, null, NSArray.<EOSortOrdering>emptyArray(), params);
 	}
 
-	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier) throws ReportProcessingException
+	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier,Map<String,Object> params) throws ReportProcessingException
 	{
-		return process(format, model, qualifier, NSArray.<EOSortOrdering>emptyArray());
+		return process(format, model, qualifier, NSArray.<EOSortOrdering>emptyArray(), params);
 	}
 
-	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings) throws ReportProcessingException
+	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params) throws ReportProcessingException
 	{
-		byte[] result = handleProcessing(format, model, qualifier, additionalSortOrderings);
+		byte[] result = handleProcessing(format, model, qualifier, additionalSortOrderings, params);
 
 		if(result != null)
 		{
@@ -42,6 +44,6 @@ public abstract class AbstractReportProcessor implements ReportProcessor
 			throw new ReportProcessingException("The report model cannot be handled by any processor. Please, verify if the model is correctly filled.");
 		}
 
-		return nextProcessor.process(format, model, qualifier, additionalSortOrderings);
+		return nextProcessor.process(format, model, qualifier, additionalSortOrderings,params);
 	}
 }
