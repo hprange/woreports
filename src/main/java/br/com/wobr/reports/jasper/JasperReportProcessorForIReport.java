@@ -68,12 +68,6 @@ public class JasperReportProcessorForIReport extends AbstractReportProcessor
 
 
 
-
-			params.put("valorSaldoInicial", new BigDecimal(1070.00));
-			params.put("periodo", "de 10/02/2010 a 10/03/2010");
-			params.put("banco", "Santander");
-
-
 			JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( additionalSortOrderings ) );
 
 
