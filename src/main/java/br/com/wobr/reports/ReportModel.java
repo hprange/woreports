@@ -25,5 +25,5 @@ public interface ReportModel
 
 	public String title();
 
-	public URL iReportTemplate();
+	public URL templateLocation();
 }

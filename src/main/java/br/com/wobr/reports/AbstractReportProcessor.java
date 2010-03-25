@@ -13,37 +13,46 @@ public abstract class AbstractReportProcessor implements ReportProcessor
 {
 	private final ReportProcessor nextProcessor;
 
-	public AbstractReportProcessor(ReportProcessor nextProcessor)
+	public AbstractReportProcessor()
+	{
+		this.nextProcessor = null;
+	}
+
+	public AbstractReportProcessor( final ReportProcessor nextProcessor )
 	{
 		this.nextProcessor = nextProcessor;
 	}
 
-	protected abstract byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params) throws ReportProcessingException;
+	protected abstract byte[] handleProcessing( Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException;
 
-	public final byte[] process(Format format, ReportModel model,Map<String,Object> params) throws ReportProcessingException
+	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters ) throws ReportProcessingException
 	{
-		return process(format, model, null, NSArray.<EOSortOrdering>emptyArray(), params);
+		return process( format, model, parameters, null, NSArray.<EOSortOrdering> emptyArray() );
 	}
 
-	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier,Map<String,Object> params) throws ReportProcessingException
+	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier ) throws ReportProcessingException
 	{
-		return process(format, model, qualifier, NSArray.<EOSortOrdering>emptyArray(), params);
+		return process( format, model, parameters, qualifier, NSArray.<EOSortOrdering> emptyArray() );
 	}
 
-	public final byte[] process(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params) throws ReportProcessingException
+	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
 	{
-		byte[] result = handleProcessing(format, model, qualifier, additionalSortOrderings, params);
+		byte[] result = handleProcessing( format, model, parameters, qualifier, additionalSortOrderings );
 
-		if(result != null)
+		if( result != null )
 		{
 			return result;
 		}
 
-		if(nextProcessor == null)
+		if( nextProcessor == null )
 		{
-			throw new ReportProcessingException("The report model cannot be handled by any processor. Please, verify if the model is correctly filled.");
+			// throw new ReportProcessingException(
+			// "The report model cannot be handled by any processor. Please, verify if the model is correctly filled."
+			// );
+
+			return null;
 		}
 
-		return nextProcessor.process(format, model, qualifier, additionalSortOrderings,params);
+		return nextProcessor.process( format, model, parameters, qualifier, additionalSortOrderings );
 	}
 }

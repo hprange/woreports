@@ -32,11 +32,9 @@ import br.com.wobr.reports.Format;
 import br.com.wobr.reports.ReportColumn;
 import br.com.wobr.reports.ReportModel;
 import br.com.wobr.reports.ReportProcessingException;
-import br.com.wobr.reports.ReportProcessor;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.internal.Nullable;
 import com.webobjects.eoaccess.EOAttribute;
 import com.webobjects.eoaccess.EOEntity;
 import com.webobjects.eocontrol.EOEditingContext;
@@ -61,9 +59,9 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 	private final Provider<Style> styleProvider;
 
 	@Inject
-	public JasperReportProcessorForModel( final Provider<EOEditingContext> editingContextProvider, final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider, @Nullable final ReportProcessor nextProcessor )
+	public JasperReportProcessorForModel( final Provider<EOEditingContext> editingContextProvider, final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider )
 	{
-		super( nextProcessor );
+		super();
 
 		this.editingContextProvider = editingContextProvider;
 		this.localizerProvider = localizerProvider;
@@ -72,7 +70,7 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 	}
 
 	@Override
-	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params ) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
 	{
 		if( model.baseEntity() == null )
 		{

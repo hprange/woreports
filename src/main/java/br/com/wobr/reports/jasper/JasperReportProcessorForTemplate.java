@@ -1,8 +1,6 @@
 package br.com.wobr.reports.jasper;
 
-import java.math.BigDecimal;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
@@ -30,31 +28,32 @@ import com.webobjects.foundation.NSMutableArray;
  * @author <a href="mailto:alexandre.parreira@doit.com.br">Alexandre
  *         Parreira</a>
  */
-public class JasperReportProcessorForIReport extends AbstractReportProcessor
+public class JasperReportProcessorForTemplate extends AbstractReportProcessor
 {
 	private final Provider<EOEditingContext> editingContextProvider;
 
 	@Inject
-	public JasperReportProcessorForIReport( final Provider<EOEditingContext> editingContextProvider )
+	public JasperReportProcessorForTemplate( final Provider<EOEditingContext> editingContextProvider )
 	{
-		super( null );
-
 		this.editingContextProvider = editingContextProvider;
 	}
 
 	@Override
-	protected byte[] handleProcessing( final Format format, final ReportModel model, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings, Map<String,Object> params ) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
 	{
 		byte[] data = null;
 
 		JasperPrint print = null;
 
+		URL url = model.templateLocation();
+
+		if( url == null )
+		{
+			return null;
+		}
+
 		try
 		{
-			// recupera a URL
-			URL url = model.iReportTemplate();
-
-			// Le a url e transforma em JasperReport
 			JasperReport jasperReport = (JasperReport) JRLoader.loadObject( url );
 
 			JRField[] fields = jasperReport.getFields();
@@ -66,13 +65,9 @@ public class JasperReportProcessorForIReport extends AbstractReportProcessor
 				keypaths.add( field.getName() );
 			}
 
-
-
 			JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( additionalSortOrderings ) );
 
-
-			// Cria o JasperPrint
-			print = JasperFillManager.fillReport( jasperReport, params, dataSource );
+			print = JasperFillManager.fillReport( jasperReport, parameters, dataSource );
 
 			data = JasperExportManager.exportReportToPdf( print );
 

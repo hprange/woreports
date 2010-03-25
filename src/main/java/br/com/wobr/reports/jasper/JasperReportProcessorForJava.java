@@ -8,13 +8,9 @@ import br.com.wobr.reports.Format;
 import br.com.wobr.reports.ReportExporter;
 import br.com.wobr.reports.ReportModel;
 import br.com.wobr.reports.ReportProcessingException;
-import br.com.wobr.reports.ReportProcessor;
 import br.com.wobr.reports.ReportTemplate;
 
 import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Provider;
-import com.google.inject.internal.Nullable;
 import com.webobjects.eocontrol.EOQualifier;
 import com.webobjects.eocontrol.EOSortOrdering;
 import com.webobjects.foundation.NSArray;
@@ -24,44 +20,43 @@ import com.webobjects.foundation.NSArray;
  */
 public class JasperReportProcessorForJava extends AbstractReportProcessor
 {
-	private final Provider<ReportExporter<JasperPrint>> exporter;
-
-	private final Injector injector;
-
-	public JasperReportProcessorForJava(Provider<ReportExporter<JasperPrint>> exporter)
-	{
-		this(exporter, null, null);
-	}
+	private final ReportExporter<JasperPrint> exporter;
 
 	@Inject
-	public JasperReportProcessorForJava(Provider<ReportExporter<JasperPrint>> exporter, Injector injector, @Nullable ReportProcessor nextProcessor)
+	public JasperReportProcessorForJava( final ReportExporter<JasperPrint> exporter )
 	{
-		super(nextProcessor);
+		super();
 
 		this.exporter = exporter;
-		this.injector = injector;
 	}
 
 	@Override
-	protected byte[] handleProcessing(Format format, ReportModel model, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings,Map<String,Object> params) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
 	{
 		Class<? extends ReportTemplate<?>> templateClass = model.javaClassTemplate();
 
-		if(templateClass == null)
+		if( templateClass == null )
 		{
 			return null;
 		}
 
-		ReportTemplate<JasperPrint> template = objectForClass(templateClass);
+		ReportTemplate<JasperPrint> template = objectForClass( templateClass );
 
-		JasperPrint print = template.build(model);
+		JasperPrint print = template.build( model );
 
-		return exporter.get().export(print);
+		return exporter.export( print );
 	}
 
-	@SuppressWarnings("unchecked")
-	ReportTemplate<JasperPrint> objectForClass(Class<? extends ReportTemplate<?>> clazz) throws ReportProcessingException
+	@SuppressWarnings( "unchecked" )
+	ReportTemplate<JasperPrint> objectForClass( final Class<? extends ReportTemplate<?>> clazz ) throws ReportProcessingException
 	{
-		return (ReportTemplate<JasperPrint>) injector.getInstance(clazz);
+		try
+		{
+			return (ReportTemplate<JasperPrint>) clazz.newInstance();
+		}
+		catch( Exception exception )
+		{
+			throw new ReportProcessingException( exception );
+		}
 	}
 }
