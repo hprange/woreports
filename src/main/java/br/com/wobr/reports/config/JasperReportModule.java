@@ -20,7 +20,7 @@ public class JasperReportModule extends AbstractModule
 	@Override
 	protected void configure()
 	{
-		Multibinder<AbstractReportProcessor> uriBinder = Multibinder.newSetBinder( binder(), AbstractReportProcessor.class, Names.named( "ForFacade" ) );
+		Multibinder<ReportProcessor> uriBinder = Multibinder.newSetBinder( binder(), ReportProcessor.class, Names.named( "ForFacade" ) );
 
 		uriBinder.addBinding().to( JasperReportProcessorForTemplate.class );
 		uriBinder.addBinding().to( JasperReportProcessorForJava.class );
