@@ -12,6 +12,9 @@ import br.com.wobr.reports.ReportProcessingException;
 import br.com.wobr.reports.ReportTemplate;
 
 import com.google.inject.Inject;
+import com.webobjects.eocontrol.EOQualifier;
+import com.webobjects.eocontrol.EOSortOrdering;
+import com.webobjects.foundation.NSArray;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
@@ -26,6 +29,12 @@ public class JasperReportProcessorForJava extends AbstractReportProcessor
 		super();
 
 		this.exporter = exporter;
+	}
+
+	@Override
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings ) throws ReportProcessingException
+	{
+		return handleProcessing( format, model, parameters, null );
 	}
 
 	@Override

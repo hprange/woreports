@@ -37,6 +37,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.webobjects.eoaccess.EOAttribute;
 import com.webobjects.eoaccess.EOEntity;
+import com.webobjects.eocontrol.EOEditingContext;
+import com.webobjects.eocontrol.EOQualifier;
+import com.webobjects.eocontrol.EOSortOrdering;
+import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSTimestamp;
 
 import er.extensions.localization.ERXLocalizer;
@@ -52,14 +56,25 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 
 	private final Provider<Style> styleProvider;
 
+	private final Provider<EOEditingContext> editingContextProvider;
+
 	@Inject
-	public JasperReportProcessorForModel( final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider )
+	public JasperReportProcessorForModel( final Provider<EOEditingContext> editingContextProvider, final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider )
 	{
 		super();
 
+		this.editingContextProvider = editingContextProvider;
 		this.localizerProvider = localizerProvider;
 		this.builderProvider = builderProvider;
 		this.styleProvider = styleProvider;
+	}
+
+	@Override
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings ) throws ReportProcessingException
+	{
+		JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( sortOrderings ) );
+
+		return handleProcessing( format, model, parameters, dataSource );
 	}
 
 	@Override
