@@ -1,0 +1,13 @@
+{
+    attributes = (
+        {allowsNull = Y; columnName = bar; name = bar; valueClassName = NSString; }, 
+        {columnName = id; name = id; valueClassName = NSNumber; valueType = i; }
+    ); 
+    attributesUsedForLocking = (id); 
+    className = "br.com.wobr.reports.model.FooRelated"; 
+    classProperties = (bar); 
+    externalName = FooRelated; 
+    fetchSpecificationDictionary = {}; 
+    name = FooRelated; 
+    primaryKeyAttributes = (id); 
+}

@@ -1,0 +1,29 @@
+{
+    attributes = (
+        {allowsNull = Y; columnName = bar; name = bar; valueClassName = NSString; }, 
+        {
+            allowsNull = Y; 
+            columnName = "foo_related_id"; 
+            name = fooRelatedId; 
+            valueClassName = NSNumber; 
+            valueType = i; 
+        }, 
+        {columnName = id; name = id; valueClassName = NSNumber; valueType = i; }
+    ); 
+    attributesUsedForLocking = (fooRelatedId, id); 
+    className = "br.com.wobr.reports.model.Foo"; 
+    classProperties = (bar, related); 
+    externalName = Foo; 
+    fetchSpecificationDictionary = {}; 
+    name = Foo; 
+    primaryKeyAttributes = (id); 
+    relationships = (
+        {
+            destination = FooRelated; 
+            isToMany = N; 
+            joinSemantic = EOInnerJoin; 
+            joins = ({destinationAttribute = id; sourceAttribute = fooRelatedId; }); 
+            name = related; 
+        }
+    ); 
+}

@@ -1,0 +1,9 @@
+{
+    EOModelVersion = "2.1"; 
+    adaptorName = Memory; 
+    connectionDictionary = {}; 
+    entities = (
+        {className = "br.com.wobr.reports.model.Foo"; name = Foo; }, 
+        {className = "br.com.wobr.reports.model.FooRelated"; name = FooRelated; }
+    ); 
+}

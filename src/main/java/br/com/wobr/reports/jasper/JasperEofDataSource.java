@@ -92,11 +92,7 @@ public class JasperEofDataSource implements JRDataSource
 	{
 		NSDictionary<String, ? extends Object> row = resultSet().objectAtIndex( index );
 
-		System.out.println( "Field: " + field.getName() );
-
 		Object value = row.valueForKeyPath( field.getName() );
-
-		System.out.println( "Value: " + value );
 
 		if( value == NSKeyValueCoding.NullValue )
 		{
@@ -134,8 +130,6 @@ public class JasperEofDataSource implements JRDataSource
 			}
 
 			resultSet = editingContext.objectsWithFetchSpecification( fetchSpecification );
-
-			System.out.println( "result set: " + resultSet );
 		}
 
 		return resultSet;
