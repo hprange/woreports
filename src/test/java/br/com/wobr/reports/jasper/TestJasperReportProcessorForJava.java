@@ -63,7 +63,7 @@ public class TestJasperReportProcessorForJava
 		Mockito.doReturn( mockTemplate.getClass() ).when( mockModel ).javaClassTemplate();
 		Mockito.doReturn( mockTemplate ).when( processor ).objectForClass( (Class<? extends ReportTemplate<?>>) mockTemplate.getClass() );
 
-		processor.handleProcessing( Format.PDF, mockModel, null, null, null );
+		processor.handleProcessing( Format.PDF, mockModel, null, null );
 
 		Mockito.verify( mockTemplate ).build( mockModel );
 		Mockito.verify( mockExporter ).export( Mockito.any( JasperPrint.class ) );
@@ -74,7 +74,7 @@ public class TestJasperReportProcessorForJava
 	{
 		Mockito.doReturn( null ).when( mockModel ).javaClassTemplate();
 
-		byte[] result = processor.handleProcessing( Format.PDF, mockModel, null, null, null );
+		byte[] result = processor.handleProcessing( Format.PDF, mockModel, null, null );
 
 		assertThat( result, nullValue() );
 	}

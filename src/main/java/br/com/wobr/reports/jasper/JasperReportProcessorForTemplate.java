@@ -17,11 +17,6 @@ import br.com.wobr.reports.ReportModel;
 import br.com.wobr.reports.ReportProcessingException;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.webobjects.eocontrol.EOEditingContext;
-import com.webobjects.eocontrol.EOQualifier;
-import com.webobjects.eocontrol.EOSortOrdering;
-import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
 
 /**
@@ -30,16 +25,13 @@ import com.webobjects.foundation.NSMutableArray;
  */
 public class JasperReportProcessorForTemplate extends AbstractReportProcessor
 {
-	private final Provider<EOEditingContext> editingContextProvider;
-
 	@Inject
-	public JasperReportProcessorForTemplate( final Provider<EOEditingContext> editingContextProvider )
+	public JasperReportProcessorForTemplate()
 	{
-		this.editingContextProvider = editingContextProvider;
 	}
 
 	@Override
-	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource ) throws ReportProcessingException
 	{
 		byte[] data = null;
 
@@ -64,8 +56,6 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor
 			{
 				keypaths.add( field.getName() );
 			}
-
-			JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( additionalSortOrderings ) );
 
 			print = JasperFillManager.fillReport( jasperReport, parameters, dataSource );
 

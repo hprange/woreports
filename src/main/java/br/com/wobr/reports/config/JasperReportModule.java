@@ -1,6 +1,7 @@
 package br.com.wobr.reports.config;
 
 import net.sf.jasperreports.engine.JasperPrint;
+import br.com.wobr.reports.AbstractReportProcessor;
 import br.com.wobr.reports.ReportExporter;
 import br.com.wobr.reports.ReportProcessor;
 import br.com.wobr.reports.ReportProcessorFacade;
@@ -19,7 +20,7 @@ public class JasperReportModule extends AbstractModule
 	@Override
 	protected void configure()
 	{
-		Multibinder<ReportProcessor> uriBinder = Multibinder.newSetBinder( binder(), ReportProcessor.class, Names.named( "ForFacade" ) );
+		Multibinder<AbstractReportProcessor> uriBinder = Multibinder.newSetBinder( binder(), AbstractReportProcessor.class, Names.named( "ForFacade" ) );
 
 		uriBinder.addBinding().to( JasperReportProcessorForTemplate.class );
 		uriBinder.addBinding().to( JasperReportProcessorForJava.class );

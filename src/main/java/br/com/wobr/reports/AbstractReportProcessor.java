@@ -2,14 +2,12 @@ package br.com.wobr.reports;
 
 import java.util.Map;
 
-import com.webobjects.eocontrol.EOQualifier;
-import com.webobjects.eocontrol.EOSortOrdering;
-import com.webobjects.foundation.NSArray;
+import net.sf.jasperreports.engine.JRDataSource;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public abstract class AbstractReportProcessor implements ReportProcessor
+public abstract class AbstractReportProcessor
 {
 	private final ReportProcessor nextProcessor;
 
@@ -23,21 +21,11 @@ public abstract class AbstractReportProcessor implements ReportProcessor
 		this.nextProcessor = nextProcessor;
 	}
 
-	protected abstract byte[] handleProcessing( Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException;
+	protected abstract byte[] handleProcessing( Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource ) throws ReportProcessingException;
 
-	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters ) throws ReportProcessingException
+	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource ) throws ReportProcessingException
 	{
-		return process( format, model, parameters, null, NSArray.<EOSortOrdering> emptyArray() );
-	}
-
-	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier ) throws ReportProcessingException
-	{
-		return process( format, model, parameters, qualifier, NSArray.<EOSortOrdering> emptyArray() );
-	}
-
-	public final byte[] process( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> additionalSortOrderings ) throws ReportProcessingException
-	{
-		byte[] result = handleProcessing( format, model, parameters, qualifier, additionalSortOrderings );
+		byte[] result = handleProcessing( format, model, parameters, dataSource );
 
 		if( result != null )
 		{
@@ -53,6 +41,6 @@ public abstract class AbstractReportProcessor implements ReportProcessor
 			return null;
 		}
 
-		return nextProcessor.process( format, model, parameters, qualifier, additionalSortOrderings );
+		return nextProcessor.process( format, model, parameters, dataSource );
 	}
 }
