@@ -28,85 +28,86 @@ import com.webobjects.foundation.NSMutableArray;
  * @author <a href="mailto:alexandre.parreira@doit.com.br">Alexandre
  *         Parreira</a>
  */
-public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
+public class JasperReportProcessorForTemplate extends AbstractReportProcessor
+{
 	private final Provider<EOEditingContext> editingContextProvider;
 
 	@Inject
-	public JasperReportProcessorForTemplate(
-			final Provider<EOEditingContext> editingContextProvider) {
+	public JasperReportProcessorForTemplate( final Provider<EOEditingContext> editingContextProvider )
+	{
 		super();
 
 		this.editingContextProvider = editingContextProvider;
 	}
 
 	@Override
-	protected byte[] handleProcessing(final Format format,
-			final ReportModel model, final Map<String, Object> parameters,
-			final EOQualifier qualifier,
-			final NSArray<EOSortOrdering> sortOrderings)
-			throws ReportProcessingException {
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings ) throws ReportProcessingException
+	{
 		byte[] data = null;
 
 		JasperPrint print = null;
 
 		URL url = model.templateLocation();
 
-		if (url == null) {
+		if( url == null )
+		{
 			return null;
 		}
 
-		try {
-			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
+		try
+		{
+			JasperReport jasperReport = (JasperReport) JRLoader.loadObject( url );
 
 			JRField[] fields = jasperReport.getFields();
 
 			NSMutableArray<String> keypaths = new NSMutableArray<String>();
 
-			for (JRField field : fields) {
-				keypaths.add(field.getName());
+			for( JRField field : fields )
+			{
+				keypaths.add( field.getName() );
 			}
 
-			JRDataSource dataSource = new JasperEofDataSource(
-					editingContextProvider.get(), model.baseEntity().name(),
-					keypaths, qualifier, model.sortOrderings()
-							.arrayByAddingObjectsFromArray(sortOrderings));
+			JRDataSource dataSource = new JasperEofDataSource( editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray( sortOrderings ) );
 
-			print = JasperFillManager.fillReport(jasperReport, parameters,
-					dataSource);
+			print = JasperFillManager.fillReport( jasperReport, parameters, dataSource );
 
-			data = JasperExportManager.exportReportToPdf(print);
+			data = JasperExportManager.exportReportToPdf( print );
 
-		} catch (JRException exception) {
-			new ReportProcessingException(exception);
+		}
+		catch( JRException exception )
+		{
+			new ReportProcessingException( exception );
 		}
 
 		return data;
 	}
 
 	@Override
-	protected byte[] handleProcessing(final Format format,
-			final ReportModel model, final Map<String, Object> parameters,
-			final JRDataSource dataSource) throws ReportProcessingException {
+	protected byte[] handleProcessing( final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource ) throws ReportProcessingException
+	{
 		byte[] data = null;
 
 		JasperPrint print = null;
 
 		URL url = model.templateLocation();
 
-		if (url == null) {
+		if( url == null )
+		{
 			return null;
 		}
 
-		try {
-			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
+		try
+		{
+			JasperReport jasperReport = (JasperReport) JRLoader.loadObject( url );
 
-			print = JasperFillManager.fillReport(jasperReport, parameters,
-					dataSource);
+			print = JasperFillManager.fillReport( jasperReport, parameters, dataSource );
 
-			data = JasperExportManager.exportReportToPdf(print);
+			data = JasperExportManager.exportReportToPdf( print );
 
-		} catch (JRException exception) {
-			new ReportProcessingException(exception);
+		}
+		catch( JRException exception )
+		{
+			new ReportProcessingException( exception );
 		}
 
 		return data;
