@@ -75,9 +75,9 @@
 			<version>1.7.0</version>
 		</dependency>
 		<dependency>
-			<groupId>br.com.wobr</groupId>
-			<artifactId>wobr-guice</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -100,8 +100,13 @@
 		<dependency>
 			<groupId>br.com.wobr</groupId>
 			<artifactId>wobr-unit-test</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0-alpha-1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<scm>
+		<connection>scm:svn:http://wobr.googlecode.com/svn/${project.artifactId}/trunk</connection>
+		<developerConnection>scm:svn:https://wobr.googlecode.com/svn/${project.artifactId}/trunk</developerConnection>
+	</scm>
 </project>
