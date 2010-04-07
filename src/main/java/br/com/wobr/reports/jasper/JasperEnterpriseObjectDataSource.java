@@ -37,14 +37,14 @@ public class JasperEnterpriseObjectDataSource implements JRDataSource
 {
 	private int index = -1;
 
-	private final NSArray<EOEnterpriseObject> objects;
+	private final NSArray<? extends EOEnterpriseObject> objects;
 
 	public JasperEnterpriseObjectDataSource( final EOEnterpriseObject... objects )
 	{
 		this( new NSArray<EOEnterpriseObject>( objects ) );
 	}
 
-	public JasperEnterpriseObjectDataSource( final NSArray<EOEnterpriseObject> objects )
+	public JasperEnterpriseObjectDataSource( final NSArray<? extends EOEnterpriseObject> objects )
 	{
 		if( objects == null )
 		{

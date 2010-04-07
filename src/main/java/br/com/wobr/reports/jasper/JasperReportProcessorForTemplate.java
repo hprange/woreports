@@ -76,7 +76,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor
 		}
 		catch( JRException exception )
 		{
-			new ReportProcessingException( exception );
+			throw new ReportProcessingException( exception );
 		}
 
 		return data;
@@ -107,7 +107,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor
 		}
 		catch( JRException exception )
 		{
-			new ReportProcessingException( exception );
+			throw new ReportProcessingException( exception );
 		}
 
 		return data;

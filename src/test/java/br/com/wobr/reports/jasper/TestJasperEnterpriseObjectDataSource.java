@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.wobr.reports.model.Foo;
 import br.com.wobr.reports.model.FooRelated;
-import br.com.wobr.unittest.TemporaryEditingContextProvider;
+import br.com.wobr.unittest.rules.TemporaryEditingContextProvider;
 
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.eocontrol.EOEnterpriseObject;
