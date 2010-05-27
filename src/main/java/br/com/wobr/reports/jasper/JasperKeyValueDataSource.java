@@ -35,13 +35,13 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
  * 
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperValueForKeyDataSource implements JRDataSource
+public class JasperKeyValueDataSource implements JRDataSource
 {
 	private int index = -1;
 
 	private final NSArray<? extends Object> objects;
 
-	public JasperValueForKeyDataSource( final NSArray<? extends Object> objects )
+	public JasperKeyValueDataSource( final NSArray<? extends Object> objects )
 	{
 		if( objects == null )
 		{
@@ -51,7 +51,7 @@ public class JasperValueForKeyDataSource implements JRDataSource
 		this.objects = objects;
 	}
 
-	public JasperValueForKeyDataSource( final Object... objects )
+	public JasperKeyValueDataSource( final Object... objects )
 	{
 		this( new NSArray<Object>( objects ) );
 	}

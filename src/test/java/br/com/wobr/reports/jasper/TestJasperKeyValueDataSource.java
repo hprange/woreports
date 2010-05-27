@@ -29,7 +29,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 @RunWith( MockitoJUnitRunner.class )
-public class TestJasperValueForKeyDataSource
+public class TestJasperKeyValueDataSource
 {
 	@Rule
 	public final TemporaryEditingContextProvider editingContextProvider = new TemporaryEditingContextProvider( "Sample" );
@@ -42,7 +42,7 @@ public class TestJasperValueForKeyDataSource
 	@Mock
 	protected JRField mockField;
 
-	protected JasperValueForKeyDataSource dataSource;
+	protected JasperKeyValueDataSource dataSource;
 
 	private EOEditingContext editingContext;
 
@@ -67,7 +67,7 @@ public class TestJasperValueForKeyDataSource
 		thrown.expect( IllegalArgumentException.class );
 		thrown.expectMessage( is( "The array of objects cannot be null" ) );
 
-		new JasperValueForKeyDataSource( (NSArray<EOEnterpriseObject>) null );
+		new JasperKeyValueDataSource( (NSArray<EOEnterpriseObject>) null );
 	}
 
 	@Test
@@ -89,7 +89,7 @@ public class TestJasperValueForKeyDataSource
 	{
 		when( mockObject.foo() ).thenReturn( "the result" );
 
-		dataSource = new JasperValueForKeyDataSource( mockObject );
+		dataSource = new JasperKeyValueDataSource( mockObject );
 
 		Mockito.when( mockField.getName() ).thenReturn( "foo" );
 
@@ -127,7 +127,7 @@ public class TestJasperValueForKeyDataSource
 
 		when( mockObject.related() ).thenReturn( mockRelatedObject );
 
-		dataSource = new JasperValueForKeyDataSource( mockObject );
+		dataSource = new JasperKeyValueDataSource( mockObject );
 
 		Mockito.when( mockField.getName() ).thenReturn( "related.foo" );
 
@@ -141,7 +141,7 @@ public class TestJasperValueForKeyDataSource
 	@Test
 	public void iterateOverMultipleRecords() throws Exception
 	{
-		dataSource = new JasperValueForKeyDataSource( mockEO, mockEO, mockEO );
+		dataSource = new JasperKeyValueDataSource( mockEO, mockEO, mockEO );
 
 		assertThat( dataSource.next(), is( true ) );
 		assertThat( dataSource.next(), is( true ) );
@@ -152,7 +152,7 @@ public class TestJasperValueForKeyDataSource
 	@Test
 	public void iterateOverMultipleRecordsFromNSArray() throws Exception
 	{
-		dataSource = new JasperValueForKeyDataSource( new NSArray<EOEnterpriseObject>( new EOEnterpriseObject[] { mockEO, mockEO } ) );
+		dataSource = new JasperKeyValueDataSource( new NSArray<EOEnterpriseObject>( new EOEnterpriseObject[] { mockEO, mockEO } ) );
 
 		assertThat( dataSource.next(), is( true ) );
 		assertThat( dataSource.next(), is( true ) );
@@ -173,6 +173,6 @@ public class TestJasperValueForKeyDataSource
 
 		mockEO = Foo.createFoo( editingContext );
 
-		dataSource = new JasperValueForKeyDataSource( mockEO );
+		dataSource = new JasperKeyValueDataSource( mockEO );
 	}
 }
