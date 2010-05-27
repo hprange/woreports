@@ -1,5 +1,7 @@
 package br.com.wobr.reports.jasper;
 
+import java.util.List;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
@@ -39,9 +41,9 @@ public class JasperKeyValueDataSource implements JRDataSource
 {
 	private int index = -1;
 
-	private final NSArray<? extends Object> objects;
+	private final List<? extends Object> objects;
 
-	public JasperKeyValueDataSource( final NSArray<? extends Object> objects )
+	public JasperKeyValueDataSource( final List<? extends Object> objects )
 	{
 		if( objects == null )
 		{
@@ -58,7 +60,7 @@ public class JasperKeyValueDataSource implements JRDataSource
 
 	public Object getFieldValue( final JRField field ) throws JRException
 	{
-		Object object = objects.objectAtIndex( index );
+		Object object = objects.get( index );
 
 		return NSKeyValueCodingAdditions.DefaultImplementation.valueForKeyPath( object, field.getName() );
 	}
