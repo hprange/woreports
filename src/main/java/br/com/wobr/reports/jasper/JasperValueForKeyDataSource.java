@@ -4,14 +4,14 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 
-import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSKeyValueCodingAdditions;
 
 /**
  * Implementation of <code>JRDataSource</code> to support
- * <code>EOEnterpriseObject</code>s. This class provides a way to iterate over
- * <code>EOEnterpriseObject</code>s and collect the required data through
- * keyValue coding pattern.
+ * <code>EOEnterpriseObject</code>s and <code>NSKeyValueCoding</code> interface.
+ * This class provides a way to iterate over <code>EOEnterpriseObject</code>s
+ * and collect the required data through keyValue coding pattern.
  * <p>
  * You can map Jasper fields to properties and relationships from the
  * <code>EOEnterpriseObject<code>s provided. You must follow the
@@ -30,35 +30,37 @@ import com.webobjects.foundation.NSArray;
  * <li>bar</li>
  * <li>relatedRelationship.relatedBar</li>
  * </ul>
+ * <p>
+ * This class also supports objects that do not implement the NSKeyValueCoding interface.
  * 
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperEnterpriseObjectDataSource implements JRDataSource
+public class JasperValueForKeyDataSource implements JRDataSource
 {
 	private int index = -1;
 
-	private final NSArray<? extends EOEnterpriseObject> objects;
+	private final NSArray<? extends Object> objects;
 
-	public JasperEnterpriseObjectDataSource( final EOEnterpriseObject... objects )
-	{
-		this( new NSArray<EOEnterpriseObject>( objects ) );
-	}
-
-	public JasperEnterpriseObjectDataSource( final NSArray<? extends EOEnterpriseObject> objects )
+	public JasperValueForKeyDataSource( final NSArray<? extends Object> objects )
 	{
 		if( objects == null )
 		{
-			throw new IllegalArgumentException( "The array of enterprise objects cannot be null" );
+			throw new IllegalArgumentException( "The array of objects cannot be null" );
 		}
 
 		this.objects = objects;
 	}
 
+	public JasperValueForKeyDataSource( final Object... objects )
+	{
+		this( new NSArray<Object>( objects ) );
+	}
+
 	public Object getFieldValue( final JRField field ) throws JRException
 	{
-		EOEnterpriseObject object = objects.objectAtIndex( index );
+		Object object = objects.objectAtIndex( index );
 
-		return object.valueForKeyPath( field.getName() );
+		return NSKeyValueCodingAdditions.DefaultImplementation.valueForKeyPath( object, field.getName() );
 	}
 
 	public boolean next() throws JRException
