@@ -45,14 +45,30 @@
 			<version>0.1</version>
 		</dependency>
 		<dependency>
-			<groupId>jasperreports</groupId>
+			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>3.5.1</version>
+			<version>3.7.3</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>bcmail-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>bcprov-jdk14</artifactId>
+					<groupId>bouncycastle</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>ar.com.fdvs</groupId>
 			<artifactId>DynamicJasper</artifactId>
-			<version>3.0.16</version>
+			<version>3.1.2</version>
+			<exclusions>
+				<exclusion>
+					<groupId>jasperreports</groupId>
+					<artifactId>jasperreports</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.inject</groupId>
@@ -78,6 +94,7 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
