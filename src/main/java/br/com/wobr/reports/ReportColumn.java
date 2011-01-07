@@ -10,7 +10,7 @@ public interface ReportColumn
 {
 	public Alignment alignment();
 
-	public Class<CustomExpression> customExpressionClass();
+	public Class<? extends CustomExpression> customExpressionClass();
 
 	public String fontColor();
 
