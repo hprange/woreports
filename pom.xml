@@ -10,7 +10,7 @@
 
 	<artifactId>wobr-reports</artifactId>
 	<packaging>woframework</packaging>
-	<version>0.5.2</version>
+	<version>0.5.3-SNAPSHOT</version>
 	<name>WOBR Reports Framework</name>
 
 	<properties>
@@ -123,7 +123,7 @@
 	</dependencies>
 
 	<scm>
-		<connection>scm:svn:http://wobr.googlecode.com/svn/wobr-reports/tags/wobr-reports-0.5.2</connection>
-		<developerConnection>scm:svn:https://wobr.googlecode.com/svn/wobr-reports/tags/wobr-reports-0.5.2</developerConnection>
+		<connection>scm:svn:http://wobr.googlecode.com/svn/wobr-reports/trunk</connection>
+		<developerConnection>scm:svn:https://wobr.googlecode.com/svn/wobr-reports/trunk</developerConnection>
 	</scm>
 </project>
