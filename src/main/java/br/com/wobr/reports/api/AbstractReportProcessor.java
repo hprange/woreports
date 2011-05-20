@@ -1,4 +1,4 @@
-package br.com.wobr.reports;
+package br.com.wobr.reports.api;
 
 import java.util.Map;
 

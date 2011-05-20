@@ -6,7 +6,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import ar.com.fdvs.dj.domain.builders.DynamicReportBuilder;
-import br.com.wobr.reports.ReportModel;
+import br.com.wobr.reports.api.ReportModel;
 
 import com.google.inject.Provider;
 import com.webobjects.eoaccess.EOEntity;

@@ -3,8 +3,8 @@ package br.com.wobr.reports.jasper;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
-import br.com.wobr.reports.ReportExporter;
-import br.com.wobr.reports.ReportProcessingException;
+import br.com.wobr.reports.api.ReportExporter;
+import br.com.wobr.reports.api.ReportProcessingException;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>

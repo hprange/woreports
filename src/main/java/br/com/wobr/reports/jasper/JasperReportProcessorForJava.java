@@ -4,12 +4,12 @@ import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperPrint;
-import br.com.wobr.reports.AbstractReportProcessor;
-import br.com.wobr.reports.Format;
-import br.com.wobr.reports.ReportExporter;
-import br.com.wobr.reports.ReportModel;
-import br.com.wobr.reports.ReportProcessingException;
-import br.com.wobr.reports.ReportTemplate;
+import br.com.wobr.reports.api.AbstractReportProcessor;
+import br.com.wobr.reports.api.Format;
+import br.com.wobr.reports.api.ReportExporter;
+import br.com.wobr.reports.api.ReportModel;
+import br.com.wobr.reports.api.ReportProcessingException;
+import br.com.wobr.reports.api.ReportTemplate;
 
 import com.google.inject.Inject;
 import com.webobjects.eocontrol.EOQualifier;

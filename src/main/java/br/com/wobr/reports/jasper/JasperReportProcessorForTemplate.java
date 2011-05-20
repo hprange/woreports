@@ -11,10 +11,10 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.util.JRLoader;
-import br.com.wobr.reports.AbstractReportProcessor;
-import br.com.wobr.reports.Format;
-import br.com.wobr.reports.ReportModel;
-import br.com.wobr.reports.ReportProcessingException;
+import br.com.wobr.reports.api.AbstractReportProcessor;
+import br.com.wobr.reports.api.Format;
+import br.com.wobr.reports.api.ReportModel;
+import br.com.wobr.reports.api.ReportProcessingException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

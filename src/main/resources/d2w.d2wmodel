@@ -1,0 +1,34 @@
+{
+  "rules" = (
+    {
+      "author" = "50"; 
+      "class" = "com.webobjects.directtoweb.Rule"; 
+      "lhs" = {
+        "class" = "com.webobjects.eocontrol.EOKeyValueQualifier"; 
+        "key" = "pageConfiguration"; 
+        "selectorName" = "isLike"; 
+        "value" = "Report*"; 
+      }; 
+      "rhs" = {
+        "class" = "com.webobjects.directtoweb.Assignment"; 
+        "keyPath" = "task"; 
+        "value" = "report"; 
+      }; 
+    }, 
+    {
+      "author" = "50"; 
+      "class" = "com.webobjects.directtoweb.Rule"; 
+      "lhs" = {
+        "class" = "com.webobjects.eocontrol.EOKeyValueQualifier"; 
+        "key" = "pageConfiguration"; 
+        "selectorName" = "isLike"; 
+        "value" = "Report*"; 
+      }; 
+      "rhs" = {
+        "class" = "com.webobjects.directtoweb.Assignment"; 
+        "keyPath" = "pageName"; 
+        "value" = "ReportPage"; 
+      }; 
+    }
+  ); 
+}

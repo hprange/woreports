@@ -16,10 +16,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import br.com.wobr.reports.Format;
-import br.com.wobr.reports.ReportExporter;
-import br.com.wobr.reports.ReportModel;
-import br.com.wobr.reports.ReportTemplate;
+import br.com.wobr.reports.api.Format;
+import br.com.wobr.reports.api.ReportExporter;
+import br.com.wobr.reports.api.ReportModel;
+import br.com.wobr.reports.api.ReportTemplate;
 
 /**
  * TODO: Generate empty PDF

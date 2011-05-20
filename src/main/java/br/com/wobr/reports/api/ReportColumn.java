@@ -1,4 +1,4 @@
-package br.com.wobr.reports;
+package br.com.wobr.reports.api;
 
 import ar.com.fdvs.dj.domain.CustomExpression;
 

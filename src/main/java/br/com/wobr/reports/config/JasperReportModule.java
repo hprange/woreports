@@ -1,10 +1,10 @@
 package br.com.wobr.reports.config;
 
 import net.sf.jasperreports.engine.JasperPrint;
-import br.com.wobr.reports.AbstractReportProcessor;
-import br.com.wobr.reports.ReportExporter;
-import br.com.wobr.reports.ReportProcessor;
-import br.com.wobr.reports.ReportProcessorFacade;
+import br.com.wobr.reports.api.AbstractReportProcessor;
+import br.com.wobr.reports.api.ReportExporter;
+import br.com.wobr.reports.api.ReportProcessor;
+import br.com.wobr.reports.api.ReportProcessorFacade;
 import br.com.wobr.reports.jasper.JasperReportExporter;
 import br.com.wobr.reports.jasper.JasperReportProcessorForJava;
 import br.com.wobr.reports.jasper.JasperReportProcessorForModel;

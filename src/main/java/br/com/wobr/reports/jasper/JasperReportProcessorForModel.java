@@ -1,16 +1,24 @@
 package br.com.wobr.reports.jasper;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporter;
+import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.UnhandledException;
 
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
@@ -27,11 +35,11 @@ import ar.com.fdvs.dj.domain.entities.DJGroup;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import br.com.wobr.base.LocalizerKeyGenerator;
-import br.com.wobr.reports.AbstractReportProcessor;
-import br.com.wobr.reports.Format;
-import br.com.wobr.reports.ReportColumn;
-import br.com.wobr.reports.ReportModel;
-import br.com.wobr.reports.ReportProcessingException;
+import br.com.wobr.reports.api.AbstractReportProcessor;
+import br.com.wobr.reports.api.Format;
+import br.com.wobr.reports.api.ReportColumn;
+import br.com.wobr.reports.api.ReportModel;
+import br.com.wobr.reports.api.ReportProcessingException;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -157,6 +165,35 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 		try
 		{
 			JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), dataSource);
+
+			if(Format.XLS.equals(format))
+			{
+				JRExporter exporter = new JRXlsExporter();
+
+				exporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
+				exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
+				exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+				exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+				exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.FALSE);
+				exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+				exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.TRUE);
+				exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
+
+				try
+				{
+					File file = File.createTempFile("report", ".xls");
+
+					exporter.setParameter(JRExporterParameter.OUTPUT_FILE, file);
+
+					exporter.exportReport();
+
+					return FileUtils.readFileToByteArray(file);
+				}
+				catch(IOException exception)
+				{
+					throw new UnhandledException(exception);
+				}
+			}
 
 			return JasperExportManager.exportReportToPdf(print);
 		}
