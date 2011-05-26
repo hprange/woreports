@@ -69,8 +69,6 @@ public class ReportPage extends ERD2WPage
 			column.setTitle(d2wContext.displayNameForProperty());
 			column.setPattern((String) d2wContext.valueForKey("pattern"));
 
-			System.out.println("Pattern: " + column.pattern());
-
 			String width = (String) d2wContext.valueForKey("width");
 
 			if(!StringUtils.isBlank(width))
