@@ -14,7 +14,7 @@
     <name>WOBR Reports Framework</name>
 
     <properties>
-        <wonder.version>5.4-SNAPSHOT</wonder.version>
+        <wonder.version>5.4.1</wonder.version>
     </properties>
 
     <dependencies>
@@ -130,9 +130,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>br.com.wobr</groupId>
-            <artifactId>wobr-unit-test</artifactId>
-            <version>1.0-beta-1</version>
+            <groupId>com.wounit</groupId>
+            <artifactId>wounit</artifactId>
+            <version>1.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
