@@ -161,12 +161,15 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 			}
 		}
 
-		DynamicReport dr = builder.build();
-
 		try
 		{
 			if(Format.XLS.equals(format))
 			{
+				builder.setPrintColumnNames(true);
+				builder.setIgnorePagination(true);
+
+				DynamicReport dr = builder.build();
+
 				JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ListLayoutManager(), dataSource);
 
 				JRExporter exporter = new JRXlsExporter();
@@ -197,6 +200,8 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor
 					throw new UnhandledException(exception);
 				}
 			}
+
+			DynamicReport dr = builder.build();
 
 			JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), dataSource);
 
