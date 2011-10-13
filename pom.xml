@@ -14,7 +14,7 @@
     <name>WOBR Reports Framework</name>
 
     <properties>
-        <wonder.version>5.4.1</wonder.version>
+        <wonder.version>5.4.2</wonder.version>
     </properties>
 
     <dependencies>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>com.wounit</groupId>
             <artifactId>wounit</artifactId>
-            <version>1.0</version>
+            <version>1.1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -141,4 +141,44 @@
         <connection>scm:svn:http://wobr.googlecode.com/svn/wobr-reports/trunk</connection>
         <developerConnection>scm:svn:https://wobr.googlecode.com/svn/wobr-reports/trunk</developerConnection>
     </scm>
+    <build>
+    	<pluginManagement>
+    		<plugins>
+    			<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+    			<plugin>
+    				<groupId>org.eclipse.m2e</groupId>
+    				<artifactId>lifecycle-mapping</artifactId>
+    				<version>1.0.0</version>
+    				<configuration>
+    					<lifecycleMappingMetadata>
+    						<pluginExecutions>
+    							<pluginExecution>
+    								<pluginExecutionFilter>
+    									<groupId>
+    										org.objectstyle.woproject.maven2
+    									</groupId>
+    									<artifactId>
+    										maven-wolifecycle-plugin
+    									</artifactId>
+    									<versionRange>
+    										[2.0.17,)
+    									</versionRange>
+    									<goals>
+    										<goal>
+    											define-woframework-resources
+    										</goal>
+    										<goal>woframework</goal>
+    									</goals>
+    								</pluginExecutionFilter>
+    								<action>
+    									<ignore></ignore>
+    								</action>
+    							</pluginExecution>
+    						</pluginExecutions>
+    					</lifecycleMappingMetadata>
+    				</configuration>
+    			</plugin>
+    		</plugins>
+    	</pluginManagement>
+    </build>
 </project>
