@@ -7,6 +7,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
 
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
 
 /**
@@ -20,13 +21,13 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
  * same pattern used for keyPath navigation.
  * <p>
  * If you have two objects like these:
- * 
+ *
  * <pre>
  * Foo            ->       FooRelated
  *  |-bar                    `-relatedBar
  *  `-relatedRelationship
  * </pre>
- * 
+ *
  * You can map the following fields:
  * <ul>
  * <li>bar</li>
@@ -34,7 +35,7 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
  * </ul>
  * <p>
  * This class also supports objects that do not implement the NSKeyValueCoding interface.
- * 
+ *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 public class JasperKeyValueDataSource implements JRDataSource
@@ -62,7 +63,9 @@ public class JasperKeyValueDataSource implements JRDataSource
 	{
 		Object object = objects.get( index );
 
-		return NSKeyValueCodingAdditions.DefaultImplementation.valueForKeyPath( object, field.getName() );
+		Object value = NSKeyValueCodingAdditions.Utility.valueForKeyPath( object, field.getName() );
+
+		return value == NSKeyValueCoding.NullValue ? null : value;
 	}
 
 	public boolean next() throws JRException

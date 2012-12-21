@@ -1,6 +1,8 @@
 package br.com.wobr.reports.jasper;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -21,7 +23,9 @@ import br.com.wobr.reports.model.StubObject;
 
 import com.webobjects.eocontrol.EOEnterpriseObject;
 import com.webobjects.foundation.NSArray;
+import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
+import com.webobjects.foundation.NSMutableDictionary;
 import com.wounit.rules.MockEditingContext;
 
 /**
@@ -79,6 +83,40 @@ public class TestJasperKeyValueDataSource
 		Object result = dataSource.getFieldValue(mockField);
 
 		assertThat((String) result, is("result"));
+	}
+
+	@Test
+	public void getFieldValueForKeypathInDictionary() throws Exception {
+		NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
+
+		dictionary.put("key.with.path", "result");
+
+		dataSource = new JasperKeyValueDataSource(dictionary);
+
+		dataSource.next();
+
+		Mockito.when(mockField.getName()).thenReturn("key.with.path");
+
+		Object result = dataSource.getFieldValue(mockField);
+
+		assertThat((String) result, is("result"));
+	}
+
+	@Test
+	public void getNullFieldValueForKeypathInDictionary() throws Exception {
+		NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
+
+		dictionary.put("key", NSKeyValueCoding.NullValue);
+
+		dataSource = new JasperKeyValueDataSource(dictionary);
+
+		dataSource.next();
+
+		Mockito.when(mockField.getName()).thenReturn("key");
+
+		Object result = dataSource.getFieldValue(mockField);
+
+		assertThat(result, nullValue());
 	}
 
 	@Test
