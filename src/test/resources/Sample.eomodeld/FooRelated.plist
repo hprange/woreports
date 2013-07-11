@@ -4,7 +4,7 @@
         {columnName = id; name = id; valueClassName = NSNumber; valueType = i; }
     ); 
     attributesUsedForLocking = (id); 
-    className = "br.com.wobr.reports.model.FooRelated"; 
+    className = "com.woreports.model.FooRelated"; 
     classProperties = (bar); 
     externalName = FooRelated; 
     fetchSpecificationDictionary = {}; 
