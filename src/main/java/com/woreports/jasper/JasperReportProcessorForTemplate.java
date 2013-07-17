@@ -10,13 +10,17 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
 import net.sf.jasperreports.engine.util.JRLoader;
+import net.sf.jasperreports.engine.util.JRSwapFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.UnhandledException;
@@ -71,6 +75,12 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
             }
 
             JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+
+            JRSwapFile swapFile = new JRSwapFile("/tmp", 1024, 1024);
+
+            JRVirtualizer virtualizer = new JRSwapFileVirtualizer(2, swapFile, true);
+
+            parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 
             print = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
