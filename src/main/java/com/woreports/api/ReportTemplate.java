@@ -5,7 +5,6 @@ package com.woreports.api;
  * 
  * @param <T>
  */
-public interface ReportTemplate<T>
-{
-	public T build(ReportModel model);
+public interface ReportTemplate<T> {
+    public T build(ReportModel model);
 }

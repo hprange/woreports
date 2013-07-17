@@ -38,130 +38,101 @@ import com.woreports.api.ReportProcessingException;
  *         Parreira</a>
  */
 public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
-	private final Provider<EOEditingContext> editingContextProvider;
+    private final Provider<EOEditingContext> editingContextProvider;
 
-	@Inject
-	public JasperReportProcessorForTemplate(
-			final Provider<EOEditingContext> editingContextProvider) {
-		super();
+    @Inject
+    public JasperReportProcessorForTemplate(final Provider<EOEditingContext> editingContextProvider) {
+	super();
 
-		this.editingContextProvider = editingContextProvider;
+	this.editingContextProvider = editingContextProvider;
+    }
+
+    @Override
+    protected byte[] handleProcessing(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
+	byte[] data = null;
+
+	JasperPrint print = null;
+
+	URL url = model.templateLocation();
+
+	if (url == null) {
+	    return null;
 	}
 
-	@Override
-	protected byte[] handleProcessing(final Format format,
-			final ReportModel model, final Map<String, Object> parameters,
-			final EOQualifier qualifier,
-			final NSArray<EOSortOrdering> sortOrderings)
-			throws ReportProcessingException {
-		byte[] data = null;
+	try {
+	    JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
 
-		JasperPrint print = null;
+	    JRField[] fields = jasperReport.getFields();
 
-		URL url = model.templateLocation();
+	    NSMutableArray<String> keypaths = new NSMutableArray<String>();
 
-		if (url == null) {
-			return null;
-		}
+	    for (JRField field : fields) {
+		keypaths.add(field.getName());
+	    }
+
+	    JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+
+	    print = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+	    if (Format.XLS.equals(format)) {
+		JRExporter exporter = new JRXlsExporter();
+
+		exporter.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+		exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+		exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.TRUE);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
+		exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
 
 		try {
-			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
+		    File file = File.createTempFile("report", ".xls");
 
-			JRField[] fields = jasperReport.getFields();
+		    exporter.setParameter(JRExporterParameter.OUTPUT_FILE, file);
 
-			NSMutableArray<String> keypaths = new NSMutableArray<String>();
+		    exporter.exportReport();
 
-			for (JRField field : fields) {
-				keypaths.add(field.getName());
-			}
-
-			JRDataSource dataSource = new JasperEofDataSource(
-					editingContextProvider.get(), model.baseEntity().name(),
-					keypaths, qualifier, model.sortOrderings()
-							.arrayByAddingObjectsFromArray(sortOrderings));
-
-			print = JasperFillManager.fillReport(jasperReport, parameters,
-					dataSource);
-
-			if (Format.XLS.equals(format)) {
-				JRExporter exporter = new JRXlsExporter();
-
-				exporter.setParameter(
-						JRXlsExporterParameter.IGNORE_PAGE_MARGINS,
-						Boolean.TRUE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN,
-						Boolean.TRUE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS,
-						Boolean.TRUE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
-						Boolean.TRUE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET,
-						Boolean.FALSE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS,
-						Boolean.TRUE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND,
-						Boolean.FALSE);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.TRUE);
-				exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
-				exporter.setParameter(
-						JRXlsExporterParameter.IS_DETECT_CELL_TYPE,
-						Boolean.TRUE);
-
-				try {
-					File file = File.createTempFile("report", ".xls");
-
-					exporter.setParameter(JRExporterParameter.OUTPUT_FILE, file);
-
-					exporter.exportReport();
-
-					return FileUtils.readFileToByteArray(file);
-				} catch (IOException exception) {
-					throw new UnhandledException(exception);
-				}
-			}
-
-			data = JasperExportManager.exportReportToPdf(print);
-
-		} catch (JRException exception) {
-			throw new ReportProcessingException(exception);
+		    return FileUtils.readFileToByteArray(file);
+		} catch (IOException exception) {
+		    throw new UnhandledException(exception);
 		}
+	    }
 
-		return data;
+	    data = JasperExportManager.exportReportToPdf(print);
+
+	} catch (JRException exception) {
+	    throw new ReportProcessingException(exception);
 	}
 
-	@Override
-	protected byte[] handleProcessing(final Format format,
-			final ReportModel model, final Map<String, Object> parameters,
-			final JRDataSource dataSource) throws ReportProcessingException {
-		byte[] data = null;
+	return data;
+    }
 
-		JasperPrint print = null;
+    @Override
+    protected byte[] handleProcessing(final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource) throws ReportProcessingException {
+	byte[] data = null;
 
-		URL url = model.templateLocation();
+	JasperPrint print = null;
 
-		if (url == null) {
-			return null;
-		}
+	URL url = model.templateLocation();
 
-		try {
-			JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
-
-			print = JasperFillManager.fillReport(jasperReport, parameters,
-					dataSource);
-
-			data = JasperExportManager.exportReportToPdf(print);
-
-		} catch (JRException exception) {
-			throw new ReportProcessingException(exception);
-		}
-
-		return data;
+	if (url == null) {
+	    return null;
 	}
+
+	try {
+	    JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
+
+	    print = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+	    data = JasperExportManager.exportReportToPdf(print);
+
+	} catch (JRException exception) {
+	    throw new ReportProcessingException(exception);
+	}
+
+	return data;
+    }
 }

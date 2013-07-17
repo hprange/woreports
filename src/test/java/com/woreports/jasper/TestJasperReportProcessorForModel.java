@@ -19,33 +19,31 @@ import com.woreports.api.ReportModel;
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 @RunWith(value = MockitoJUnitRunner.class)
-public class TestJasperReportProcessorForModel
-{
-	@Mock
-	protected Provider<DynamicReportBuilder> mockBuilderProvider;
+public class TestJasperReportProcessorForModel {
+    @Mock
+    protected Provider<DynamicReportBuilder> mockBuilderProvider;
 
-	@Mock
-	protected EOEntity mockEntity;
+    @Mock
+    protected EOEntity mockEntity;
 
-	@Mock
-	protected ReportModel mockModel;
+    @Mock
+    protected ReportModel mockModel;
 
-	@Test
-	public void generatePdfForModel() throws Exception
-	{
-		// Mockito.when(mockModel.baseEntity()).thenReturn(mockEntity);
-		//
-		// JasperReportProcessorForModel processor = new
-		// JasperReportProcessorForModel(null, null, mockBuilderProvider, null,
-		// null);
-		//
-		// byte[] result = processor.handleProcessing(mockModel, null, null);
-		//
-		// InputStream inputStream =
-		// getClass().getResourceAsStream("/sample-model-report.pdf");
-		//
-		// byte[] expectedBytes = inputStream.toString().getBytes();
+    @Test
+    public void generatePdfForModel() throws Exception {
+	// Mockito.when(mockModel.baseEntity()).thenReturn(mockEntity);
+	//
+	// JasperReportProcessorForModel processor = new
+	// JasperReportProcessorForModel(null, null, mockBuilderProvider, null,
+	// null);
+	//
+	// byte[] result = processor.handleProcessing(mockModel, null, null);
+	//
+	// InputStream inputStream =
+	// getClass().getResourceAsStream("/sample-model-report.pdf");
+	//
+	// byte[] expectedBytes = inputStream.toString().getBytes();
 
-		// assertArrayEquals(expectedBytes, result);
-	}
+	// assertArrayEquals(expectedBytes, result);
+    }
 }

@@ -5,16 +5,21 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import net.sf.jasperreports.engine.fill.JRSwapFileVirtualizer;
+import net.sf.jasperreports.engine.util.JRSwapFile;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.io.FileUtils;
@@ -57,278 +62,252 @@ import er.extensions.localization.ERXLocalizer;
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperReportProcessorForModel extends AbstractReportProcessor
-{
-	private final Provider<DynamicReportBuilder> builderProvider;
+public class JasperReportProcessorForModel extends AbstractReportProcessor {
+    private final Provider<DynamicReportBuilder> builderProvider;
 
-	private final Provider<EOEditingContext> editingContextProvider;
+    private final Provider<EOEditingContext> editingContextProvider;
 
-	private final Provider<ERXLocalizer> localizerProvider;
+    private final Provider<ERXLocalizer> localizerProvider;
 
-	private final Provider<Style> styleProvider;
+    private final Provider<Style> styleProvider;
 
-	@Inject
-	public JasperReportProcessorForModel(final Provider<EOEditingContext> editingContextProvider, final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider)
-	{
-		super();
+    @Inject
+    public JasperReportProcessorForModel(final Provider<EOEditingContext> editingContextProvider, final Provider<ERXLocalizer> localizerProvider, final Provider<DynamicReportBuilder> builderProvider, final Provider<Style> styleProvider) {
+	super();
 
-		this.editingContextProvider = editingContextProvider;
-		this.localizerProvider = localizerProvider;
-		this.builderProvider = builderProvider;
-		this.styleProvider = styleProvider;
+	this.editingContextProvider = editingContextProvider;
+	this.localizerProvider = localizerProvider;
+	this.builderProvider = builderProvider;
+	this.styleProvider = styleProvider;
+    }
+
+    @Override
+    protected byte[] handleProcessing(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
+	JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+
+	return handleProcessing(format, model, parameters, dataSource);
+    }
+
+    @Override
+    protected byte[] handleProcessing(final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource) throws ReportProcessingException {
+	if (model.baseEntity() == null) {
+	    return null;
 	}
 
-	@Override
-	protected byte[] handleProcessing(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException
-	{
-		JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+	DynamicReportBuilder builder = builderProvider.get();
 
-		return handleProcessing(format, model, parameters, dataSource);
+	builder.setTitle(model.title()).setSubtitle(model.subtitle());
+
+	EOEntity entity = model.baseEntity();
+
+	for (ReportColumn column : model.columns()) {
+	    EOAttribute attribute = entity._attributeForPath(column.keypath());
+
+	    if (attribute == null) {
+		throw new ReportProcessingException("Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling.");
+	    }
+
+	    String classname = attribute.adaptorValueClass().getName();
+
+	    if (NSTimestamp.class.getName().equals(classname)) {
+		classname = Date.class.getName();
+	    }
+
+	    String columnTitle = titleForColumn(entity, column);
+
+	    ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(column.pattern());
+
+	    if (column.width() != null) {
+		columnBuilder.setWidth(column.width());
+		columnBuilder.setFixedWidth(false);
+	    }
+
+	    processColumnStyle(column, columnBuilder, classname);
+	    processCustomExpression(column, columnBuilder, builder);
+
+	    AbstractColumn djColumn = null;
+
+	    try {
+		djColumn = columnBuilder.build();
+	    } catch (ColumnBuilderException exception) {
+		throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
+	    }
+
+	    if (column.hidden()) {
+		builder.addField(column.title(), classname);
+	    } else {
+		builder.addColumn(djColumn);
+	    }
+
+	    if (column.groupedBy()) {
+		GroupBuilder groupBuilder = new GroupBuilder();
+
+		DJGroup group = groupBuilder.setCriteriaColumn((PropertyColumn) djColumn).setGroupLayout(GroupLayout.VALUE_IN_HEADER_WITH_HEADERS).build();
+
+		builder.addGroup(group);
+
+		builder.setPrintColumnNames(false);
+	    }
 	}
 
-	@Override
-	protected byte[] handleProcessing(final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource) throws ReportProcessingException
-	{
-		if(model.baseEntity() == null)
-		{
-			return null;
+	JRSwapFile swapFile = new JRSwapFile("/tmp", 1024, 1024);
+
+	JRVirtualizer virtualizer = new JRSwapFileVirtualizer(2, swapFile, true);
+
+	parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
+
+	try {
+	    if (Format.XLS.equals(format)) {
+		builder.setPrintColumnNames(true);
+		builder.setIgnorePagination(true);
+
+		DynamicReport dr = builder.build();
+
+		dr.setReportLocale(new Locale("pt", "BR"));
+
+		System.out.println("Vai obter os parametros");
+
+		for (Object param : dr.getParameters()) {
+		    System.out.println("Param: " + param);
 		}
 
-		DynamicReportBuilder builder = builderProvider.get();
+		JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ListLayoutManager(), dataSource, parameters);
 
-		builder.setTitle(model.title()).setSubtitle(model.subtitle());
+		JRExporter exporter = new JRXlsExporter();
 
-		EOEntity entity = model.baseEntity();
+		exporter.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
+		exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+		exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+		exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.TRUE);
+		exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
+		exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
 
-		for(ReportColumn column : model.columns())
-		{
-			EOAttribute attribute = entity._attributeForPath(column.keypath());
+		try {
+		    File file = File.createTempFile("report", ".xls");
 
-			if(attribute == null)
-			{
-				throw new ReportProcessingException("Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling.");
-			}
+		    exporter.setParameter(JRExporterParameter.OUTPUT_FILE, file);
 
-			String classname = attribute.adaptorValueClass().getName();
+		    exporter.exportReport();
 
-			if(NSTimestamp.class.getName().equals(classname))
-			{
-				classname = Date.class.getName();
-			}
-
-			String columnTitle = titleForColumn(entity, column);
-
-			ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(column.pattern());
-
-			if(column.width() != null)
-			{
-				columnBuilder.setWidth(column.width());
-				columnBuilder.setFixedWidth(false);
-			}
-
-			processColumnStyle(column, columnBuilder, classname);
-			processCustomExpression(column, columnBuilder, builder);
-
-			AbstractColumn djColumn = null;
-
-			try
-			{
-				djColumn = columnBuilder.build();
-			}
-			catch(ColumnBuilderException exception)
-			{
-				throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
-			}
-
-			if(column.hidden())
-			{
-				builder.addField(column.title(), classname);
-			}
-			else
-			{
-				builder.addColumn(djColumn);
-			}
-
-			if(column.groupedBy())
-			{
-				GroupBuilder groupBuilder = new GroupBuilder();
-
-				DJGroup group = groupBuilder.setCriteriaColumn((PropertyColumn) djColumn).setGroupLayout(GroupLayout.VALUE_IN_HEADER_WITH_HEADERS).build();
-
-				builder.addGroup(group);
-
-				builder.setPrintColumnNames(false);
-			}
+		    return FileUtils.readFileToByteArray(file);
+		} catch (IOException exception) {
+		    throw new UnhandledException(exception);
 		}
+	    }
 
-		try
-		{
-			if(Format.XLS.equals(format))
-			{
-				builder.setPrintColumnNames(true);
-				builder.setIgnorePagination(true);
+	    DynamicReport dr = builder.build();
 
-				DynamicReport dr = builder.build();
+	    JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), dataSource, parameters);
 
-				JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ListLayoutManager(), dataSource);
+	    return JasperExportManager.exportReportToPdf(print);
+	} catch (JRException exception) {
+	    throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
+	} finally {
+	    if (virtualizer != null) {
+		virtualizer.cleanup();
+	    }
+	}
+    }
 
-				JRExporter exporter = new JRXlsExporter();
+    private void processColumnStyle(final ReportColumn column, final ColumnBuilder columnBuilder, final String classname) throws ReportProcessingException {
+	Style style = styleProvider.get();
 
-				exporter.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, Boolean.TRUE);
-				exporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
-				exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
-				exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-				exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, Boolean.FALSE);
-				exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
-				exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
-				exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.TRUE);
-				exporter.setParameter(JRExporterParameter.JASPER_PRINT, print);
-				exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+	style.getFont().setFontSize(8);
 
-				try
-				{
-					File file = File.createTempFile("report", ".xls");
-
-					exporter.setParameter(JRExporterParameter.OUTPUT_FILE, file);
-
-					exporter.exportReport();
-
-					return FileUtils.readFileToByteArray(file);
-				}
-				catch(IOException exception)
-				{
-					throw new UnhandledException(exception);
-				}
-			}
-
-			DynamicReport dr = builder.build();
-
-			JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), dataSource);
-
-			return JasperExportManager.exportReportToPdf(print);
-		}
-		catch(JRException exception)
-		{
-			throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
-		}
+	if (column.fontSize() != null && column.fontSize().length() > 0) {
+	    try {
+		style.getFont().setFontSize(Integer.parseInt(column.fontSize().trim().replace("pt", "").replace("px", "")));
+		style.getFont().setPdfFontEmbedded(true);
+	    } catch (Exception e) {
+		throw new ReportProcessingException("Ocorreu um erro ao gerar o relat\u00f3rio: Tamanho da fonte deve ser num\u00e9rico", e);
+	    }
 	}
 
-	private void processColumnStyle(final ReportColumn column, final ColumnBuilder columnBuilder, final String classname) throws ReportProcessingException
-	{
-		Style style = styleProvider.get();
-
-		style.getFont().setFontSize(8);
-
-		if(column.fontSize() != null && column.fontSize().length() > 0)
-		{
-			try
-			{
-				style.getFont().setFontSize(Integer.parseInt(column.fontSize().trim().replace("pt", "").replace("px", "")));
-				style.getFont().setPdfFontEmbedded(true);
-			}
-			catch(Exception e)
-			{
-				throw new ReportProcessingException("Ocorreu um erro ao gerar o relat\u00f3rio: Tamanho da fonte deve ser num\u00e9rico", e);
-			}
-		}
-
-		if(column.fontColor() != null && column.fontColor().length() > 0)
-		{
-			try
-			{
-				style.setTextColor(new Color(Integer.parseInt(column.fontColor().replace("#", ""), 16)));
-			}
-			catch(Exception e)
-			{
-				throw new ReportProcessingException("Ocorreu um erro ao gerar o relat\u00f3rio: A cor da fonte deve ser informada em HexaDecimal v\u00e1lido Ex: #FF0000", e);
-			}
-		}
-
-		switch(column.alignment())
-		{
-			case CENTER:
-				style.setHorizontalAlign(HorizontalAlign.CENTER);
-				break;
-
-			case RIGHT:
-				style.setHorizontalAlign(HorizontalAlign.RIGHT);
-				break;
-
-			case LEFT:
-			default:
-				style.setHorizontalAlign(HorizontalAlign.LEFT);
-				break;
-		}
-
-		if(BigDecimal.class.getName().equals(classname))
-		{
-			Style red;
-
-			try
-			{
-				red = (Style) BeanUtils.cloneBean(style);
-				// TODO: Check why the CustomExpression is executed twice if the
-				// ConditionalStyle is added.
-				// columnBuilder.addConditionalStyle(new ConditionalStyle(new
-				// AmmountCondition(), red));
-			}
-			catch(Exception e)
-			{
-				throw new ReportProcessingException("Erro ao gerar relat\u00f3rio", e);
-			}
-
-			red.setTextColor(Color.RED);
-
-		}
-
-		columnBuilder.setStyle(style);
+	if (column.fontColor() != null && column.fontColor().length() > 0) {
+	    try {
+		style.setTextColor(new Color(Integer.parseInt(column.fontColor().replace("#", ""), 16)));
+	    } catch (Exception e) {
+		throw new ReportProcessingException("Ocorreu um erro ao gerar o relat\u00f3rio: A cor da fonte deve ser informada em HexaDecimal v\u00e1lido Ex: #FF0000", e);
+	    }
 	}
 
-	private void processCustomExpression(final ReportColumn column, final ColumnBuilder columnBuilder, final DynamicReportBuilder reportBuilder) throws ReportProcessingException
-	{
-		Class<? extends CustomExpression> customExpressionClass = column.customExpressionClass();
+	switch (column.alignment()) {
+	case CENTER:
+	    style.setHorizontalAlign(HorizontalAlign.CENTER);
+	    break;
 
-		if(customExpressionClass == null)
-		{
-			return;
-		}
+	case RIGHT:
+	    style.setHorizontalAlign(HorizontalAlign.RIGHT);
+	    break;
 
-		CustomExpression customExpression = null;
-
-		try
-		{
-			customExpression = customExpressionClass.newInstance();
-		}
-		catch(Exception exception)
-		{
-			throw new ReportProcessingException(exception);
-		}
-
-		columnBuilder.setColumnProperty(null);
-		columnBuilder.setCustomExpression(customExpression);
-
-		EOEntity entity = column.model().baseEntity();
-
-		String classname = entity._attributeForPath(column.keypath()).className();
-
-		reportBuilder.addField(column.keypath(), classname);
+	case LEFT:
+	default:
+	    style.setHorizontalAlign(HorizontalAlign.LEFT);
+	    break;
 	}
 
-	private String titleForColumn(final EOEntity entity, final ReportColumn column)
-	{
-		String key = column.title();
+	if (BigDecimal.class.getName().equals(classname)) {
+	    Style red;
 
-		if(key == null)
-		{
-			LocalizerKeyGenerator generator = new LocalizerKeyGenerator();
+	    try {
+		red = (Style) BeanUtils.cloneBean(style);
+		// TODO: Check why the CustomExpression is executed twice if the
+		// ConditionalStyle is added.
+		// columnBuilder.addConditionalStyle(new ConditionalStyle(new
+		// AmmountCondition(), red));
+	    } catch (Exception e) {
+		throw new ReportProcessingException("Erro ao gerar relat\u00f3rio", e);
+	    }
 
-			key = generator.generateKey(entity, column.keypath());
-		}
+	    red.setTextColor(Color.RED);
 
-		ERXLocalizer localizer = localizerProvider.get();
-
-		String title = (String) localizer.valueForKey(key);
-
-		return title == null ? key : title;
 	}
+
+	columnBuilder.setStyle(style);
+    }
+
+    private void processCustomExpression(final ReportColumn column, final ColumnBuilder columnBuilder, final DynamicReportBuilder reportBuilder) throws ReportProcessingException {
+	Class<? extends CustomExpression> customExpressionClass = column.customExpressionClass();
+
+	if (customExpressionClass == null) {
+	    return;
+	}
+
+	CustomExpression customExpression = null;
+
+	try {
+	    customExpression = customExpressionClass.newInstance();
+	} catch (Exception exception) {
+	    throw new ReportProcessingException(exception);
+	}
+
+	columnBuilder.setColumnProperty(null);
+	columnBuilder.setCustomExpression(customExpression);
+
+	EOEntity entity = column.model().baseEntity();
+
+	String classname = entity._attributeForPath(column.keypath()).className();
+
+	reportBuilder.addField(column.keypath(), classname);
+    }
+
+    private String titleForColumn(final EOEntity entity, final ReportColumn column) {
+	String key = column.title();
+
+	if (key == null) {
+	    LocalizerKeyGenerator generator = new LocalizerKeyGenerator();
+
+	    key = generator.generateKey(entity, column.keypath());
+	}
+
+	ERXLocalizer localizer = localizerProvider.get();
+
+	String title = (String) localizer.valueForKey(key);
+
+	return title == null ? key : title;
+    }
 }

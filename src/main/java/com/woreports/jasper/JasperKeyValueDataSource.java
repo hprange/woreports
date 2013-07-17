@@ -21,13 +21,13 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
  * same pattern used for keyPath navigation.
  * <p>
  * If you have two objects like these:
- *
+ * 
  * <pre>
  * Foo            ->       FooRelated
  *  |-bar                    `-relatedBar
  *  `-relatedRelationship
  * </pre>
- *
+ * 
  * You can map the following fields:
  * <ul>
  * <li>bar</li>
@@ -35,43 +35,37 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
  * </ul>
  * <p>
  * This class also supports objects that do not implement the NSKeyValueCoding interface.
- *
+ * 
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperKeyValueDataSource implements JRDataSource
-{
-	private int index = -1;
+public class JasperKeyValueDataSource implements JRDataSource {
+    private int index = -1;
 
-	private final List<? extends Object> objects;
+    private final List<? extends Object> objects;
 
-	public JasperKeyValueDataSource( final List<? extends Object> objects )
-	{
-		if( objects == null )
-		{
-			throw new IllegalArgumentException( "The array of objects cannot be null" );
-		}
-
-		this.objects = objects;
+    public JasperKeyValueDataSource(final List<? extends Object> objects) {
+	if (objects == null) {
+	    throw new IllegalArgumentException("The array of objects cannot be null");
 	}
 
-	public JasperKeyValueDataSource( final Object... objects )
-	{
-		this( new NSArray<Object>( objects ) );
-	}
+	this.objects = objects;
+    }
 
-	public Object getFieldValue( final JRField field ) throws JRException
-	{
-		Object object = objects.get( index );
+    public JasperKeyValueDataSource(final Object... objects) {
+	this(new NSArray<Object>(objects));
+    }
 
-		Object value = NSKeyValueCodingAdditions.Utility.valueForKeyPath( object, field.getName() );
+    public Object getFieldValue(final JRField field) throws JRException {
+	Object object = objects.get(index);
 
-		return value == NSKeyValueCoding.NullValue ? null : value;
-	}
+	Object value = NSKeyValueCodingAdditions.Utility.valueForKeyPath(object, field.getName());
 
-	public boolean next() throws JRException
-	{
-		index++;
+	return value == NSKeyValueCoding.NullValue ? null : value;
+    }
 
-		return index < objects.size();
-	}
+    public boolean next() throws JRException {
+	index++;
+
+	return index < objects.size();
+    }
 }
