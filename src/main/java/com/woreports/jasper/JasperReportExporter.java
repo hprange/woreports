@@ -11,6 +11,7 @@ import com.woreports.api.ReportProcessingException;
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 public class JasperReportExporter implements ReportExporter<JasperPrint> {
+    @Override
     public byte[] export(final JasperPrint print) throws ReportProcessingException {
 	try {
 	    return JasperExportManager.exportReportToPdf(print);

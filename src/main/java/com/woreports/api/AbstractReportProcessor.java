@@ -19,18 +19,22 @@ public abstract class AbstractReportProcessor implements ReportProcessor {
 
     protected abstract byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException;
 
+    @Override
     public final byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters) throws ReportProcessingException {
 	return process(format, model, parameters, (EOQualifier) null);
     }
 
+    @Override
     public final byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier) throws ReportProcessingException {
 	return process(format, model, parameters, qualifier, NSArray.<EOSortOrdering> emptyArray());
     }
 
+    @Override
     public final byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
 	return handleProcessing(format, model, parameters, qualifier, sortOrderings);
     }
 
+    @Override
     public final byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource) throws ReportProcessingException {
 	return handleProcessing(format, model, parameters, dataSource);
     }

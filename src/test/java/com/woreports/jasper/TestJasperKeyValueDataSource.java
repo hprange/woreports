@@ -80,6 +80,21 @@ public class TestJasperKeyValueDataSource {
     }
 
     @Test
+    public void getFieldValueForKeyOnSimpleObject() throws Exception {
+	when(mockObject.foo()).thenReturn("the result");
+
+	dataSource = new JasperKeyValueDataSource(mockObject);
+
+	Mockito.when(mockField.getName()).thenReturn("foo");
+
+	dataSource.next();
+
+	Object result = dataSource.getFieldValue(mockField);
+
+	assertThat((String) result, is("the result"));
+    }
+
+    @Test
     public void getFieldValueForKeypathInDictionary() throws Exception {
 	NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
 
@@ -94,38 +109,6 @@ public class TestJasperKeyValueDataSource {
 	Object result = dataSource.getFieldValue(mockField);
 
 	assertThat((String) result, is("result"));
-    }
-
-    @Test
-    public void getNullFieldValueForKeypathInDictionary() throws Exception {
-	NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
-
-	dictionary.put("key", NSKeyValueCoding.NullValue);
-
-	dataSource = new JasperKeyValueDataSource(dictionary);
-
-	dataSource.next();
-
-	Mockito.when(mockField.getName()).thenReturn("key");
-
-	Object result = dataSource.getFieldValue(mockField);
-
-	assertThat(result, nullValue());
-    }
-
-    @Test
-    public void getFieldValueForKeyOnSimpleObject() throws Exception {
-	when(mockObject.foo()).thenReturn("the result");
-
-	dataSource = new JasperKeyValueDataSource(mockObject);
-
-	Mockito.when(mockField.getName()).thenReturn("foo");
-
-	dataSource.next();
-
-	Object result = dataSource.getFieldValue(mockField);
-
-	assertThat((String) result, is("the result"));
     }
 
     @Test
@@ -162,6 +145,23 @@ public class TestJasperKeyValueDataSource {
 	String result = (String) dataSource.getFieldValue(mockField);
 
 	assertThat(result, is("test"));
+    }
+
+    @Test
+    public void getNullFieldValueForKeypathInDictionary() throws Exception {
+	NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
+
+	dictionary.put("key", NSKeyValueCoding.NullValue);
+
+	dataSource = new JasperKeyValueDataSource(dictionary);
+
+	dataSource.next();
+
+	Mockito.when(mockField.getName()).thenReturn("key");
+
+	Object result = dataSource.getFieldValue(mockField);
+
+	assertThat(result, nullValue());
     }
 
     @Test

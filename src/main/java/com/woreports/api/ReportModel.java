@@ -22,7 +22,7 @@ public interface ReportModel {
 
     public String subtitle();
 
-    public String title();
-
     public URL templateLocation();
+
+    public String title();
 }

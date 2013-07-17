@@ -22,14 +22,17 @@ public class ReportProcessorFacade implements ReportProcessor {
 	this.processors = processors;
     }
 
+    @Override
     public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters) throws ReportProcessingException {
 	return process(format, model, parameters, (EOQualifier) null);
     }
 
+    @Override
     public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier) throws ReportProcessingException {
 	return process(format, model, parameters, qualifier, NSArray.<EOSortOrdering> emptyArray());
     }
 
+    @Override
     public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
 	byte[] result = null;
 
@@ -44,6 +47,7 @@ public class ReportProcessorFacade implements ReportProcessor {
 	return result;
     }
 
+    @Override
     public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource) throws ReportProcessingException {
 	byte[] result = null;
 

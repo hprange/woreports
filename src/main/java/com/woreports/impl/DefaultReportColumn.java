@@ -32,38 +32,47 @@ public class DefaultReportColumn implements ReportColumn {
 
     private Integer width;
 
+    @Override
     public Alignment alignment() {
 	return alignment;
     }
 
+    @Override
     public Class<? extends CustomExpression> customExpressionClass() {
 	return customExpressionClass;
     }
 
+    @Override
     public String fontColor() {
 	return fontColor;
     }
 
+    @Override
     public String fontSize() {
 	return fontSize;
     }
 
+    @Override
     public Boolean groupedBy() {
 	return groupedBy;
     }
 
+    @Override
     public Boolean hidden() {
 	return hidden;
     }
 
+    @Override
     public String keypath() {
 	return keypath;
     }
 
+    @Override
     public ReportModel model() {
 	return model;
     }
 
+    @Override
     public String pattern() {
 	return pattern;
     }
@@ -112,10 +121,12 @@ public class DefaultReportColumn implements ReportColumn {
 	this.width = width;
     }
 
+    @Override
     public String title() {
 	return title;
     }
 
+    @Override
     public Integer width() {
 	return width;
     }

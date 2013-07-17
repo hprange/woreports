@@ -82,6 +82,7 @@ public class JasperEofDataSource implements JRDataSource {
 	this.editingContext = editingContext;
     }
 
+    @Override
     public Object getFieldValue(final JRField field) throws JRException {
 	NSDictionary<String, ? extends Object> row = resultSet().objectAtIndex(index);
 
@@ -94,6 +95,7 @@ public class JasperEofDataSource implements JRDataSource {
 	return value;
     }
 
+    @Override
     public boolean next() throws JRException {
 	index++;
 

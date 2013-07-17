@@ -55,6 +55,7 @@ public class JasperKeyValueDataSource implements JRDataSource {
 	this(new NSArray<Object>(objects));
     }
 
+    @Override
     public Object getFieldValue(final JRField field) throws JRException {
 	Object object = objects.get(index);
 
@@ -63,6 +64,7 @@ public class JasperKeyValueDataSource implements JRDataSource {
 	return value == NSKeyValueCoding.NullValue ? null : value;
     }
 
+    @Override
     public boolean next() throws JRException {
 	index++;
 

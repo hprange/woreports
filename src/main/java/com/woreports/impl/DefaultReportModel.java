@@ -36,18 +36,22 @@ public class DefaultReportModel implements ReportModel {
 	return sortOrderings.add(sortOrdering);
     }
 
+    @Override
     public EOEntity baseEntity() {
 	return baseEntity;
     }
 
+    @Override
     public NSArray<? extends ReportColumn> columns() {
 	return columns;
     }
 
+    @Override
     public Class<? extends ReportTemplate<?>> javaClassTemplate() {
 	return javaClassTemplate;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public NSArray<String> keyPaths() {
 	return (NSArray<String>) columns.valueForKeyPath("keypath");
@@ -73,18 +77,22 @@ public class DefaultReportModel implements ReportModel {
 	this.title = title;
     }
 
+    @Override
     public NSArray<EOSortOrdering> sortOrderings() {
 	return sortOrderings;
     }
 
+    @Override
     public String subtitle() {
 	return subtitle;
     }
 
+    @Override
     public URL templateLocation() {
 	return templateLocation;
     }
 
+    @Override
     public String title() {
 	return title;
     }
