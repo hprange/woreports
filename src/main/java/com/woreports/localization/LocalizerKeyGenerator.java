@@ -36,41 +36,41 @@ public class LocalizerKeyGenerator {
      *             the entity to be used in the generated key
      */
     public String generateKey(EOEntity entity, String keypath) {
-	if (entity == null) {
-	    return null;
-	}
+        if (entity == null) {
+            return null;
+        }
 
-	StringBuilder buffer = new StringBuilder();
+        StringBuilder buffer = new StringBuilder();
 
-	EOEntity entityForLastProperty = entity;
-	String attributeName = keypath;
+        EOEntity entityForLastProperty = entity;
+        String attributeName = keypath;
 
-	if (keypath != null && keypath.contains(".")) {
-	    EOAttribute attribute = entity._attributeForPath(keypath);
+        if (keypath != null && keypath.contains(".")) {
+            EOAttribute attribute = entity._attributeForPath(keypath);
 
-	    if (attribute == null) {
-		int indexOfLastDot = keypath.lastIndexOf(".");
+            if (attribute == null) {
+                int indexOfLastDot = keypath.lastIndexOf(".");
 
-		EORelationship relationship = entity._relationshipForPath(keypath.substring(0, indexOfLastDot));
+                EORelationship relationship = entity._relationshipForPath(keypath.substring(0, indexOfLastDot));
 
-		if (relationship == null) {
-		    throw new IllegalArgumentException(String.format("Cannot generate key. The keypath '%s' is invalid.", keypath));
-		}
+                if (relationship == null) {
+                    throw new IllegalArgumentException(String.format("Cannot generate key. The keypath '%s' is invalid.", keypath));
+                }
 
-		entityForLastProperty = relationship.destinationEntity();
-		attributeName = keypath.substring(indexOfLastDot + 1);
-	    } else {
-		entityForLastProperty = attribute.entity();
-		attributeName = attribute.name();
-	    }
-	}
+                entityForLastProperty = relationship.destinationEntity();
+                attributeName = keypath.substring(indexOfLastDot + 1);
+            } else {
+                entityForLastProperty = attribute.entity();
+                attributeName = attribute.name();
+            }
+        }
 
-	buffer.append("model.").append(entityForLastProperty.model().name()).append(".").append(entityForLastProperty.name());
+        buffer.append("model.").append(entityForLastProperty.model().name()).append(".").append(entityForLastProperty.name());
 
-	if (attributeName != null) {
-	    buffer.append(".").append(attributeName);
-	}
+        if (attributeName != null) {
+            buffer.append(".").append(attributeName);
+        }
 
-	return buffer.toString();
+        return buffer.toString();
     }
 }

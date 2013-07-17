@@ -43,31 +43,31 @@ public class JasperKeyValueDataSource implements JRDataSource {
 
     private final List<? extends Object> objects;
 
-    public JasperKeyValueDataSource(final List<? extends Object> objects) {
-	if (objects == null) {
-	    throw new IllegalArgumentException("The array of objects cannot be null");
-	}
+    public JasperKeyValueDataSource(List<? extends Object> objects) {
+        if (objects == null) {
+            throw new IllegalArgumentException("The array of objects cannot be null");
+        }
 
-	this.objects = objects;
+        this.objects = objects;
     }
 
-    public JasperKeyValueDataSource(final Object... objects) {
-	this(new NSArray<Object>(objects));
+    public JasperKeyValueDataSource(Object... objects) {
+        this(new NSArray<Object>(objects));
     }
 
     @Override
-    public Object getFieldValue(final JRField field) throws JRException {
-	Object object = objects.get(index);
+    public Object getFieldValue(JRField field) throws JRException {
+        Object object = objects.get(index);
 
-	Object value = NSKeyValueCodingAdditions.Utility.valueForKeyPath(object, field.getName());
+        Object value = NSKeyValueCodingAdditions.Utility.valueForKeyPath(object, field.getName());
 
-	return value == NSKeyValueCoding.NullValue ? null : value;
+        return value == NSKeyValueCoding.NullValue ? null : value;
     }
 
     @Override
     public boolean next() throws JRException {
-	index++;
+        index++;
 
-	return index < objects.size();
+        return index < objects.size();
     }
 }

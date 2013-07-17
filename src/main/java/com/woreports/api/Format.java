@@ -9,10 +9,10 @@ public enum Format {
     private final String mimeType;
 
     private Format(String mimeType) {
-	this.mimeType = mimeType;
+        this.mimeType = mimeType;
     }
 
     public String mimeType() {
-	return mimeType;
+        return mimeType;
     }
 }

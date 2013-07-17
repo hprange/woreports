@@ -31,91 +31,91 @@ public class ReportPage extends ERD2WPage {
     private EOQualifier restrictingQualifier;
 
     public ReportPage(WOContext context) {
-	super(context);
+        super(context);
 
-	// TODO: We must improve the integration with Guice
-	Injector injector = (Injector) application().valueForKey("injector");
+        // TODO: We must improve the integration with Guice
+        Injector injector = (Injector) application().valueForKey("injector");
 
-	injector.injectMembers(this);
+        injector.injectMembers(this);
     }
 
     @Override
     public void appendToResponse(WOResponse response, WOContext context) {
-	super.appendToResponse(response, context);
+        super.appendToResponse(response, context);
 
-	DefaultReportModel model = new DefaultReportModel();
+        DefaultReportModel model = new DefaultReportModel();
 
-	model.setBaseEntity(entity());
+        model.setBaseEntity(entity());
 
-	D2WContext d2wContext = d2wContext();
+        D2WContext d2wContext = d2wContext();
 
-	model.setTitle((String) d2wContext.valueForKey("title"));
+        model.setTitle((String) d2wContext.valueForKey("title"));
 
-	Format format = formatForString((String) d2wContext.valueForKey("format"));
+        Format format = formatForString((String) d2wContext.valueForKey("format"));
 
-	for (String key : displayPropertyKeys()) {
-	    d2wContext.setPropertyKey(key);
-	    d2wContext.computeDerivedValues();
+        for (String key : displayPropertyKeys()) {
+            d2wContext.setPropertyKey(key);
+            d2wContext.computeDerivedValues();
 
-	    DefaultReportColumn column = new DefaultReportColumn();
+            DefaultReportColumn column = new DefaultReportColumn();
 
-	    column.setKeypath(key);
-	    column.setModel(model);
-	    column.setTitle(d2wContext.displayNameForProperty());
-	    column.setPattern((String) d2wContext.valueForKey("pattern"));
+            column.setKeypath(key);
+            column.setModel(model);
+            column.setTitle(d2wContext.displayNameForProperty());
+            column.setPattern((String) d2wContext.valueForKey("pattern"));
 
-	    String width = (String) d2wContext.valueForKey("width");
+            String width = (String) d2wContext.valueForKey("width");
 
-	    if (!StringUtils.isBlank(width)) {
-		column.setWidth(Integer.valueOf(width));
-	    }
+            if (!StringUtils.isBlank(width)) {
+                column.setWidth(Integer.valueOf(width));
+            }
 
-	    model.addColumn(column);
-	}
+            model.addColumn(column);
+        }
 
-	// TODO: The qualifier should be provided by the query page that calls
-	// this page.
-	EOQualifier qualifier = restrictingQualifier();
+        // TODO: The qualifier should be provided by the query page that calls
+        // this page.
+        EOQualifier qualifier = restrictingQualifier();
 
-	// TODO: Why not grab parameters based on a rule?
-	Map<String, Object> parameters = new HashMap<String, Object>();
+        // TODO: Why not grab parameters based on a rule?
+        Map<String, Object> parameters = new HashMap<String, Object>();
 
-	String fileName = StringUtils.defaultIfEmpty((String) d2wContext.valueForKey("fileName"), "report");
+        String fileName = StringUtils.defaultIfEmpty((String) d2wContext.valueForKey("fileName"), "report");
 
-	try {
-	    byte[] data = reportProcessor.process(format, model, parameters, qualifier);
+        try {
+            byte[] data = reportProcessor.process(format, model, parameters, qualifier);
 
-	    response.disableClientCaching();
-	    response.removeHeadersForKey("Cache-Control");
-	    response.removeHeadersForKey("pragma");
-	    response.setHeader(format.mimeType(), "content-type");
-	    response.setHeader("inline; attachment; filename=\"" + fileName + "." + format.toString().toLowerCase() + "\"", "content-disposition");
-	    response.setHeader(Integer.toString(data.length), "content-length");
-	    response.setContent(data);
-	} catch (ReportProcessingException exception) {
-	    throw new UnhandledException(exception);
-	}
+            response.disableClientCaching();
+            response.removeHeadersForKey("Cache-Control");
+            response.removeHeadersForKey("pragma");
+            response.setHeader(format.mimeType(), "content-type");
+            response.setHeader("inline; attachment; filename=\"" + fileName + "." + format.toString().toLowerCase() + "\"", "content-disposition");
+            response.setHeader(Integer.toString(data.length), "content-length");
+            response.setContent(data);
+        } catch (ReportProcessingException exception) {
+            throw new UnhandledException(exception);
+        }
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public NSArray<String> displayPropertyKeys() {
-	return super.displayPropertyKeys();
+        return super.displayPropertyKeys();
     }
 
     private Format formatForString(String text) {
-	if (text == null) {
-	    return Format.PDF;
-	}
+        if (text == null) {
+            return Format.PDF;
+        }
 
-	return Format.valueOf(text);
+        return Format.valueOf(text);
     }
 
     public EOQualifier restrictingQualifier() {
-	return restrictingQualifier;
+        return restrictingQualifier;
     }
 
     public void setRestrictingQualifier(EOQualifier restrictingQualifier) {
-	this.restrictingQualifier = restrictingQualifier;
+        this.restrictingQualifier = restrictingQualifier;
     }
 }

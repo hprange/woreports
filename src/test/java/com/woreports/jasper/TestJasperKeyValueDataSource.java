@@ -49,150 +49,150 @@ public class TestJasperKeyValueDataSource {
 
     @Test
     public void exceptionIfCannotFindTheKey() throws Exception {
-	Mockito.when(mockField.getName()).thenReturn("invalidKey");
+        Mockito.when(mockField.getName()).thenReturn("invalidKey");
 
-	dataSource.next();
+        dataSource.next();
 
-	thrown.expect(NSKeyValueCoding.UnknownKeyException.class);
+        thrown.expect(NSKeyValueCoding.UnknownKeyException.class);
 
-	dataSource.getFieldValue(mockField);
+        dataSource.getFieldValue(mockField);
     }
 
     @Test
     public void exceptionIfNullNSArrayProvided() {
-	thrown.expect(IllegalArgumentException.class);
-	thrown.expectMessage(is("The array of objects cannot be null"));
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage(is("The array of objects cannot be null"));
 
-	new JasperKeyValueDataSource((NSArray<EOEnterpriseObject>) null);
+        new JasperKeyValueDataSource((NSArray<EOEnterpriseObject>) null);
     }
 
     @Test
     public void getFieldValueForKey() throws Exception {
-	mockEO.setBar("result");
+        mockEO.setBar("result");
 
-	Mockito.when(mockField.getName()).thenReturn("bar");
+        Mockito.when(mockField.getName()).thenReturn("bar");
 
-	dataSource.next();
+        dataSource.next();
 
-	Object result = dataSource.getFieldValue(mockField);
+        Object result = dataSource.getFieldValue(mockField);
 
-	assertThat((String) result, is("result"));
+        assertThat((String) result, is("result"));
     }
 
     @Test
     public void getFieldValueForKeyOnSimpleObject() throws Exception {
-	when(mockObject.foo()).thenReturn("the result");
+        when(mockObject.foo()).thenReturn("the result");
 
-	dataSource = new JasperKeyValueDataSource(mockObject);
+        dataSource = new JasperKeyValueDataSource(mockObject);
 
-	Mockito.when(mockField.getName()).thenReturn("foo");
+        Mockito.when(mockField.getName()).thenReturn("foo");
 
-	dataSource.next();
+        dataSource.next();
 
-	Object result = dataSource.getFieldValue(mockField);
+        Object result = dataSource.getFieldValue(mockField);
 
-	assertThat((String) result, is("the result"));
+        assertThat((String) result, is("the result"));
     }
 
     @Test
     public void getFieldValueForKeypathInDictionary() throws Exception {
-	NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
+        NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
 
-	dictionary.put("key.with.path", "result");
+        dictionary.put("key.with.path", "result");
 
-	dataSource = new JasperKeyValueDataSource(dictionary);
+        dataSource = new JasperKeyValueDataSource(dictionary);
 
-	dataSource.next();
+        dataSource.next();
 
-	Mockito.when(mockField.getName()).thenReturn("key.with.path");
+        Mockito.when(mockField.getName()).thenReturn("key.with.path");
 
-	Object result = dataSource.getFieldValue(mockField);
+        Object result = dataSource.getFieldValue(mockField);
 
-	assertThat((String) result, is("result"));
+        assertThat((String) result, is("result"));
     }
 
     @Test
     public void getFieldValueForRelationship() throws Exception {
-	FooRelated mockRelatedObject = FooRelated.createFooRelated(editingContext);
+        FooRelated mockRelatedObject = FooRelated.createFooRelated(editingContext);
 
-	mockRelatedObject.setBar("expected result");
+        mockRelatedObject.setBar("expected result");
 
-	mockEO.setRelatedRelationship(mockRelatedObject);
+        mockEO.setRelatedRelationship(mockRelatedObject);
 
-	Mockito.when(mockField.getName()).thenReturn("related.bar");
+        Mockito.when(mockField.getName()).thenReturn("related.bar");
 
-	dataSource.next();
+        dataSource.next();
 
-	String result = (String) dataSource.getFieldValue(mockField);
+        String result = (String) dataSource.getFieldValue(mockField);
 
-	assertThat(result, is("expected result"));
+        assertThat(result, is("expected result"));
     }
 
     @Test
     public void getFieldValueForRelationshipForSimpleObject() throws Exception {
-	StubObject mockRelatedObject = mock(StubObject.class);
+        StubObject mockRelatedObject = mock(StubObject.class);
 
-	when(mockRelatedObject.foo()).thenReturn("test");
+        when(mockRelatedObject.foo()).thenReturn("test");
 
-	when(mockObject.related()).thenReturn(mockRelatedObject);
+        when(mockObject.related()).thenReturn(mockRelatedObject);
 
-	dataSource = new JasperKeyValueDataSource(mockObject);
+        dataSource = new JasperKeyValueDataSource(mockObject);
 
-	Mockito.when(mockField.getName()).thenReturn("related.foo");
+        Mockito.when(mockField.getName()).thenReturn("related.foo");
 
-	dataSource.next();
+        dataSource.next();
 
-	String result = (String) dataSource.getFieldValue(mockField);
+        String result = (String) dataSource.getFieldValue(mockField);
 
-	assertThat(result, is("test"));
+        assertThat(result, is("test"));
     }
 
     @Test
     public void getNullFieldValueForKeypathInDictionary() throws Exception {
-	NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
+        NSDictionary<String, Object> dictionary = new NSMutableDictionary<String, Object>();
 
-	dictionary.put("key", NSKeyValueCoding.NullValue);
+        dictionary.put("key", NSKeyValueCoding.NullValue);
 
-	dataSource = new JasperKeyValueDataSource(dictionary);
+        dataSource = new JasperKeyValueDataSource(dictionary);
 
-	dataSource.next();
+        dataSource.next();
 
-	Mockito.when(mockField.getName()).thenReturn("key");
+        Mockito.when(mockField.getName()).thenReturn("key");
 
-	Object result = dataSource.getFieldValue(mockField);
+        Object result = dataSource.getFieldValue(mockField);
 
-	assertThat(result, nullValue());
+        assertThat(result, nullValue());
     }
 
     @Test
     public void iterateOverMultipleRecords() throws Exception {
-	dataSource = new JasperKeyValueDataSource(mockEO, mockEO, mockEO);
+        dataSource = new JasperKeyValueDataSource(mockEO, mockEO, mockEO);
 
-	assertThat(dataSource.next(), is(true));
-	assertThat(dataSource.next(), is(true));
-	assertThat(dataSource.next(), is(true));
-	assertThat(dataSource.next(), is(false));
+        assertThat(dataSource.next(), is(true));
+        assertThat(dataSource.next(), is(true));
+        assertThat(dataSource.next(), is(true));
+        assertThat(dataSource.next(), is(false));
     }
 
     @Test
     public void iterateOverMultipleRecordsFromNSArray() throws Exception {
-	dataSource = new JasperKeyValueDataSource(new NSArray<EOEnterpriseObject>(new EOEnterpriseObject[] { mockEO, mockEO }));
+        dataSource = new JasperKeyValueDataSource(new NSArray<EOEnterpriseObject>(new EOEnterpriseObject[] { mockEO, mockEO }));
 
-	assertThat(dataSource.next(), is(true));
-	assertThat(dataSource.next(), is(true));
-	assertThat(dataSource.next(), is(false));
+        assertThat(dataSource.next(), is(true));
+        assertThat(dataSource.next(), is(true));
+        assertThat(dataSource.next(), is(false));
     }
 
     @Test
     public void iterateOverOneRecord() throws Exception {
-	assertThat(dataSource.next(), is(true));
-	assertThat(dataSource.next(), is(false));
+        assertThat(dataSource.next(), is(true));
+        assertThat(dataSource.next(), is(false));
     }
 
     @Before
     public void setup() {
-	mockEO = Foo.createFoo(editingContext);
+        mockEO = Foo.createFoo(editingContext);
 
-	dataSource = new JasperKeyValueDataSource(mockEO);
+        dataSource = new JasperKeyValueDataSource(mockEO);
     }
 }

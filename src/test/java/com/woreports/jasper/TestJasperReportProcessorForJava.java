@@ -28,19 +28,19 @@ import com.woreports.api.ReportTemplate;
  */
 @RunWith(MockitoJUnitRunner.class)
 public class TestJasperReportProcessorForJava {
-    public static byte[] inputStreamToBytes(final InputStream in) throws IOException {
-	ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
-	byte[] buffer = new byte[1024];
-	int len;
+    public static byte[] inputStreamToBytes(InputStream in) throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+        byte[] buffer = new byte[1024];
+        int len;
 
-	while ((len = in.read(buffer)) >= 0) {
-	    out.write(buffer, 0, len);
-	}
+        while ((len = in.read(buffer)) >= 0) {
+            out.write(buffer, 0, len);
+        }
 
-	in.close();
-	out.close();
+        in.close();
+        out.close();
 
-	return out.toByteArray();
+        return out.toByteArray();
     }
 
     @Mock
@@ -57,26 +57,26 @@ public class TestJasperReportProcessorForJava {
     @Test
     @SuppressWarnings("unchecked")
     public void generateEmptyPDF() throws Exception {
-	Mockito.doReturn(mockTemplate.getClass()).when(mockModel).javaClassTemplate();
-	Mockito.doReturn(mockTemplate).when(processor).objectForClass((Class<? extends ReportTemplate<?>>) mockTemplate.getClass());
+        Mockito.doReturn(mockTemplate.getClass()).when(mockModel).javaClassTemplate();
+        Mockito.doReturn(mockTemplate).when(processor).objectForClass((Class<? extends ReportTemplate<?>>) mockTemplate.getClass());
 
-	processor.handleProcessing(Format.PDF, mockModel, null, null);
+        processor.handleProcessing(Format.PDF, mockModel, null, null);
 
-	Mockito.verify(mockTemplate).build(mockModel);
-	Mockito.verify(mockExporter).export(Mockito.any(JasperPrint.class));
+        Mockito.verify(mockTemplate).build(mockModel);
+        Mockito.verify(mockExporter).export(Mockito.any(JasperPrint.class));
     }
 
     @Test
     public void returnNullIfNoJavaTemplateDefined() throws Exception {
-	Mockito.doReturn(null).when(mockModel).javaClassTemplate();
+        Mockito.doReturn(null).when(mockModel).javaClassTemplate();
 
-	byte[] result = processor.handleProcessing(Format.PDF, mockModel, null, null);
+        byte[] result = processor.handleProcessing(Format.PDF, mockModel, null, null);
 
-	assertThat(result, nullValue());
+        assertThat(result, nullValue());
     }
 
     @Before
     public void setup() {
-	processor = Mockito.spy(new JasperReportProcessorForJava(mockExporter));
+        processor = Mockito.spy(new JasperReportProcessorForJava(mockExporter));
     }
 }

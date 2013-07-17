@@ -7,18 +7,18 @@ public class ReportProcessingException extends Exception {
     private static final long serialVersionUID = 1L;
 
     public ReportProcessingException() {
-	super();
+        super();
     }
 
     public ReportProcessingException(String message) {
-	super(message);
+        super(message);
     }
 
     public ReportProcessingException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     public ReportProcessingException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 }

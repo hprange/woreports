@@ -20,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestFormat {
     @Parameters
     public static Collection<Object[]> parameters() {
-	return Arrays.asList(new Object[][] { { PDF, "application/pdf" }, { XLS, "application/vnd.ms-excel" } });
+        return Arrays.asList(new Object[][] { { PDF, "application/pdf" }, { XLS, "application/vnd.ms-excel" } });
     }
 
     private final Format format;
@@ -28,12 +28,12 @@ public class TestFormat {
     private final String mimeType;
 
     public TestFormat(Format format, String mimeType) {
-	this.format = format;
-	this.mimeType = mimeType;
+        this.format = format;
+        this.mimeType = mimeType;
     }
 
     @Test
     public void contentTypeForFormat() throws Exception {
-	assertThat(format.mimeType(), is(mimeType));
+        assertThat(format.mimeType(), is(mimeType));
     }
 }

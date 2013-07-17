@@ -34,100 +34,100 @@ public class DefaultReportColumn implements ReportColumn {
 
     @Override
     public Alignment alignment() {
-	return alignment;
+        return alignment;
     }
 
     @Override
     public Class<? extends CustomExpression> customExpressionClass() {
-	return customExpressionClass;
+        return customExpressionClass;
     }
 
     @Override
     public String fontColor() {
-	return fontColor;
+        return fontColor;
     }
 
     @Override
     public String fontSize() {
-	return fontSize;
+        return fontSize;
     }
 
     @Override
     public Boolean groupedBy() {
-	return groupedBy;
+        return groupedBy;
     }
 
     @Override
     public Boolean hidden() {
-	return hidden;
+        return hidden;
     }
 
     @Override
     public String keypath() {
-	return keypath;
+        return keypath;
     }
 
     @Override
     public ReportModel model() {
-	return model;
+        return model;
     }
 
     @Override
     public String pattern() {
-	return pattern;
+        return pattern;
     }
 
     public void setAlignment(Alignment alignment) {
-	this.alignment = alignment;
+        this.alignment = alignment;
     }
 
     public void setCustomExpressionClass(Class<? extends CustomExpression> customExpressionClass) {
-	this.customExpressionClass = customExpressionClass;
+        this.customExpressionClass = customExpressionClass;
     }
 
     public void setFontColor(String fontColor) {
-	this.fontColor = fontColor;
+        this.fontColor = fontColor;
     }
 
     public void setFontSize(String fontSize) {
-	this.fontSize = fontSize;
+        this.fontSize = fontSize;
     }
 
     public void setGroupedBy(Boolean groupedBy) {
-	this.groupedBy = groupedBy;
+        this.groupedBy = groupedBy;
     }
 
     public void setHidden(Boolean hidden) {
-	this.hidden = hidden;
+        this.hidden = hidden;
     }
 
     public void setKeypath(String keypath) {
-	this.keypath = keypath;
+        this.keypath = keypath;
     }
 
     public void setModel(ReportModel model) {
-	this.model = model;
+        this.model = model;
     }
 
     public void setPattern(String pattern) {
-	this.pattern = pattern;
+        this.pattern = pattern;
     }
 
     public void setTitle(String title) {
-	this.title = title;
+        this.title = title;
     }
 
     public void setWidth(Integer width) {
-	this.width = width;
+        this.width = width;
     }
 
     @Override
     public String title() {
-	return title;
+        return title;
     }
 
     @Override
     public Integer width() {
-	return width;
+        return width;
     }
 }

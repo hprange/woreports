@@ -17,15 +17,15 @@ import com.woreports.jasper.JasperReportProcessorForTemplate;
 public class JasperReportModule extends AbstractModule {
     @Override
     protected void configure() {
-	Multibinder<ReportProcessor> uriBinder = Multibinder.newSetBinder(binder(), ReportProcessor.class, Names.named("ForFacade"));
+        Multibinder<ReportProcessor> uriBinder = Multibinder.newSetBinder(binder(), ReportProcessor.class, Names.named("ForFacade"));
 
-	uriBinder.addBinding().to(JasperReportProcessorForTemplate.class);
-	uriBinder.addBinding().to(JasperReportProcessorForJava.class);
-	uriBinder.addBinding().to(JasperReportProcessorForModel.class);
+        uriBinder.addBinding().to(JasperReportProcessorForTemplate.class);
+        uriBinder.addBinding().to(JasperReportProcessorForJava.class);
+        uriBinder.addBinding().to(JasperReportProcessorForModel.class);
 
-	bind(ReportProcessor.class).to(ReportProcessorFacade.class);
+        bind(ReportProcessor.class).to(ReportProcessorFacade.class);
 
-	bind(new TypeLiteral<ReportExporter<JasperPrint>>() {
-	}).to(JasperReportExporter.class);
+        bind(new TypeLiteral<ReportExporter<JasperPrint>>() {
+        }).to(JasperReportExporter.class);
     }
 }

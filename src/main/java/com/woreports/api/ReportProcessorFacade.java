@@ -19,46 +19,46 @@ public class ReportProcessorFacade implements ReportProcessor {
 
     @Inject
     public ReportProcessorFacade(@Named("ForFacade") final Set<ReportProcessor> processors) {
-	this.processors = processors;
+        this.processors = processors;
     }
 
     @Override
-    public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters) throws ReportProcessingException {
-	return process(format, model, parameters, (EOQualifier) null);
+    public byte[] process(Format format, ReportModel model, Map<String, Object> parameters) throws ReportProcessingException {
+        return process(format, model, parameters, (EOQualifier) null);
     }
 
     @Override
-    public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier) throws ReportProcessingException {
-	return process(format, model, parameters, qualifier, NSArray.<EOSortOrdering> emptyArray());
+    public byte[] process(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier) throws ReportProcessingException {
+        return process(format, model, parameters, qualifier, NSArray.<EOSortOrdering> emptyArray());
     }
 
     @Override
-    public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
-	byte[] result = null;
+    public byte[] process(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
+        byte[] result = null;
 
-	for (ReportProcessor processor : processors) {
-	    result = processor.process(format, model, parameters, qualifier, sortOrderings);
+        for (ReportProcessor processor : processors) {
+            result = processor.process(format, model, parameters, qualifier, sortOrderings);
 
-	    if (result != null) {
-		break;
-	    }
-	}
+            if (result != null) {
+                break;
+            }
+        }
 
-	return result;
+        return result;
     }
 
     @Override
-    public byte[] process(final Format format, final ReportModel model, final Map<String, Object> parameters, final JRDataSource dataSource) throws ReportProcessingException {
-	byte[] result = null;
+    public byte[] process(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
+        byte[] result = null;
 
-	for (ReportProcessor processor : processors) {
-	    result = processor.process(format, model, parameters, dataSource);
+        for (ReportProcessor processor : processors) {
+            result = processor.process(format, model, parameters, dataSource);
 
-	    if (result != null) {
-		break;
-	    }
-	}
+            if (result != null) {
+                break;
+            }
+        }
 
-	return result;
+        return result;
     }
 }

@@ -31,19 +31,19 @@ public class TestJasperReportProcessorForModel {
 
     @Test
     public void generatePdfForModel() throws Exception {
-	// Mockito.when(mockModel.baseEntity()).thenReturn(mockEntity);
-	//
-	// JasperReportProcessorForModel processor = new
-	// JasperReportProcessorForModel(null, null, mockBuilderProvider, null,
-	// null);
-	//
-	// byte[] result = processor.handleProcessing(mockModel, null, null);
-	//
-	// InputStream inputStream =
-	// getClass().getResourceAsStream("/sample-model-report.pdf");
-	//
-	// byte[] expectedBytes = inputStream.toString().getBytes();
+        // Mockito.when(mockModel.baseEntity()).thenReturn(mockEntity);
+        //
+        // JasperReportProcessorForModel processor = new
+        // JasperReportProcessorForModel(null, null, mockBuilderProvider, null,
+        // null);
+        //
+        // byte[] result = processor.handleProcessing(mockModel, null, null);
+        //
+        // InputStream inputStream =
+        // getClass().getResourceAsStream("/sample-model-report.pdf");
+        //
+        // byte[] expectedBytes = inputStream.toString().getBytes();
 
-	// assertArrayEquals(expectedBytes, result);
+        // assertArrayEquals(expectedBytes, result);
     }
 }

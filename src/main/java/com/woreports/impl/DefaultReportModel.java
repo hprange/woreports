@@ -29,71 +29,71 @@ public class DefaultReportModel implements ReportModel {
     private String title;
 
     public boolean addColumn(ReportColumn column) {
-	return columns.add(column);
+        return columns.add(column);
     }
 
     public boolean addSortOrdering(EOSortOrdering sortOrdering) {
-	return sortOrderings.add(sortOrdering);
+        return sortOrderings.add(sortOrdering);
     }
 
     @Override
     public EOEntity baseEntity() {
-	return baseEntity;
+        return baseEntity;
     }
 
     @Override
     public NSArray<? extends ReportColumn> columns() {
-	return columns;
+        return columns;
     }
 
     @Override
     public Class<? extends ReportTemplate<?>> javaClassTemplate() {
-	return javaClassTemplate;
+        return javaClassTemplate;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public NSArray<String> keyPaths() {
-	return (NSArray<String>) columns.valueForKeyPath("keypath");
+        return (NSArray<String>) columns.valueForKeyPath("keypath");
     }
 
     public void setBaseEntity(EOEntity baseEntity) {
-	this.baseEntity = baseEntity;
+        this.baseEntity = baseEntity;
     }
 
     public void setJavaClassTemplate(Class<? extends ReportTemplate<?>> javaClassTemplate) {
-	this.javaClassTemplate = javaClassTemplate;
+        this.javaClassTemplate = javaClassTemplate;
     }
 
     public void setSubtitle(String subtitle) {
-	this.subtitle = subtitle;
+        this.subtitle = subtitle;
     }
 
     public void setTemplateLocation(URL templateLocation) {
-	this.templateLocation = templateLocation;
+        this.templateLocation = templateLocation;
     }
 
     public void setTitle(String title) {
-	this.title = title;
+        this.title = title;
     }
 
     @Override
     public NSArray<EOSortOrdering> sortOrderings() {
-	return sortOrderings;
+        return sortOrderings;
     }
 
     @Override
     public String subtitle() {
-	return subtitle;
+        return subtitle;
     }
 
     @Override
     public URL templateLocation() {
-	return templateLocation;
+        return templateLocation;
     }
 
     @Override
     public String title() {
-	return title;
+        return title;
     }
 }

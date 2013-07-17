@@ -55,51 +55,51 @@ public class JasperEofDataSource implements JRDataSource {
 
     private final NSArray<EOSortOrdering> sortOrderings;
 
-    public JasperEofDataSource(final EOEditingContext editingContext, final String entityName) {
-	this(editingContext, entityName, null, null, null);
+    public JasperEofDataSource(EOEditingContext editingContext, String entityName) {
+        this(editingContext, entityName, null, null, null);
     }
 
-    public JasperEofDataSource(final EOEditingContext editingContext, final String entityName, final EOQualifier qualifier) {
-	this(editingContext, entityName, null, qualifier, null);
+    public JasperEofDataSource(EOEditingContext editingContext, String entityName, EOQualifier qualifier) {
+        this(editingContext, entityName, null, qualifier, null);
     }
 
-    public JasperEofDataSource(final EOEditingContext editingContext, final String entityName, final NSArray<String> keyPaths) {
-	this(editingContext, entityName, keyPaths, null, null);
+    public JasperEofDataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths) {
+        this(editingContext, entityName, keyPaths, null, null);
     }
 
-    public JasperEofDataSource(final EOEditingContext editingContext, final String entityName, final NSArray<String> keyPaths, final EOQualifier qualifier) {
-	this(editingContext, entityName, keyPaths, qualifier, null);
+    public JasperEofDataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths, EOQualifier qualifier) {
+        this(editingContext, entityName, keyPaths, qualifier, null);
     }
 
-    public JasperEofDataSource(final EOEditingContext editingContext, final String entityName, final NSArray<String> keyPaths, final EOQualifier qualifier, final NSArray<EOSortOrdering> sortOrderings) {
-	Validate.notNull(editingContext, "Cannot create the data source with null editing context");
-	Validate.notEmpty(entityName, "Cannot create the data source with null or empty entity name");
+    public JasperEofDataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) {
+        Validate.notNull(editingContext, "Cannot create the data source with null editing context");
+        Validate.notEmpty(entityName, "Cannot create the data source with null or empty entity name");
 
-	this.entityName = entityName;
-	this.keyPaths = keyPaths;
-	this.qualifier = qualifier;
-	this.sortOrderings = sortOrderings;
-	this.editingContext = editingContext;
+        this.entityName = entityName;
+        this.keyPaths = keyPaths;
+        this.qualifier = qualifier;
+        this.sortOrderings = sortOrderings;
+        this.editingContext = editingContext;
     }
 
     @Override
-    public Object getFieldValue(final JRField field) throws JRException {
-	NSDictionary<String, ? extends Object> row = resultSet().objectAtIndex(index);
+    public Object getFieldValue(JRField field) throws JRException {
+        NSDictionary<String, ? extends Object> row = resultSet().objectAtIndex(index);
 
-	Object value = row.valueForKeyPath(field.getName());
+        Object value = row.valueForKeyPath(field.getName());
 
-	if (value == NSKeyValueCoding.NullValue) {
-	    return null;
-	}
+        if (value == NSKeyValueCoding.NullValue) {
+            return null;
+        }
 
-	return value;
+        return value;
     }
 
     @Override
     public boolean next() throws JRException {
-	index++;
+        index++;
 
-	return index < resultSet().size();
+        return index < resultSet().size();
     }
 
     /**
@@ -110,18 +110,18 @@ public class JasperEofDataSource implements JRDataSource {
      */
     @SuppressWarnings("unchecked")
     protected NSArray<NSDictionary<String, ? extends Object>> resultSet() {
-	if (resultSet == null) {
-	    EOFetchSpecification fetchSpecification = new EOFetchSpecification(entityName, qualifier, sortOrderings);
+        if (resultSet == null) {
+            EOFetchSpecification fetchSpecification = new EOFetchSpecification(entityName, qualifier, sortOrderings);
 
-	    fetchSpecification.setFetchesRawRows(true);
+            fetchSpecification.setFetchesRawRows(true);
 
-	    if (keyPaths != null && keyPaths.size() > 0) {
-		fetchSpecification.setRawRowKeyPaths(keyPaths);
-	    }
+            if (keyPaths != null && keyPaths.size() > 0) {
+                fetchSpecification.setRawRowKeyPaths(keyPaths);
+            }
 
-	    resultSet = editingContext.objectsWithFetchSpecification(fetchSpecification);
-	}
+            resultSet = editingContext.objectsWithFetchSpecification(fetchSpecification);
+        }
 
-	return resultSet;
+        return resultSet;
     }
 }
