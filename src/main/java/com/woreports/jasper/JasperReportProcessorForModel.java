@@ -83,7 +83,7 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
 
     @Override
     protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
-        JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+        JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
 
         return handleProcessing(format, model, parameters, dataSource);
     }

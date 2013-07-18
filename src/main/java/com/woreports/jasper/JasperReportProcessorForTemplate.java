@@ -74,7 +74,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
                 keypaths.add(field.getName());
             }
 
-            JRDataSource dataSource = new JasperEofDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+            JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
 
             JRSwapFile swapFile = new JRSwapFile("/tmp", 1024, 1024);
 
