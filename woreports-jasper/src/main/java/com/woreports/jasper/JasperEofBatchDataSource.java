@@ -77,7 +77,7 @@ public class JasperEofBatchDataSource implements JRDataSource {
             fetchSpecification.setRawRowKeyPaths(keyPaths);
         }
 
-        iterator = new ERXFetchSpecificationBatchIterator(fetchSpecification, editingContext, 1000);
+        iterator = new ERXFetchSpecificationBatchIterator(fetchSpecification, editingContext);
 
     }
 
