@@ -165,12 +165,6 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
 
                 dr.setReportLocale(new Locale("pt", "BR"));
 
-                System.out.println("Vai obter os parametros");
-
-                for (Object param : dr.getParameters()) {
-                    System.out.println("Param: " + param);
-                }
-
                 JasperPrint print = DynamicJasperHelper.generateJasperPrint(dr, new ListLayoutManager(), dataSource, parameters);
 
                 JRExporter exporter = new JRXlsExporter();
