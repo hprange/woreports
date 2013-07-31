@@ -1,4 +1,0 @@
-(
-    50 : pageConfiguration like 'Report*' => task = report [com.webobjects.directtoweb.Assignment],
-    50 : pageConfiguration like 'Report*' => pageName = ReportPage [com.webobjects.directtoweb.Assignment]
-)
