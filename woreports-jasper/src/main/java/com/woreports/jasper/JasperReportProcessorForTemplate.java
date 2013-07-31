@@ -43,6 +43,11 @@ import com.woreports.api.ReportProcessingException;
  */
 public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
     private final Provider<EOEditingContext> editingContextProvider;
+    private URL url;
+    private Map<String, Object> parameters;
+    private JRDataSource dataSource;
+    private Format format;
+    private boolean isPrepared = false;
 
     @Inject
     public JasperReportProcessorForTemplate(Provider<EOEditingContext> editingContextProvider) {
@@ -52,29 +57,15 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
     }
 
     @Override
-    protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
-        byte[] data = null;
-
-        JasperPrint print = null;
-
-        URL url = model.templateLocation();
-
-        if (url == null) {
+    public byte[] generateReport() throws ReportProcessingException {
+        if (!isPrepared) {
             return null;
         }
 
+        byte[] data = null;
+
         try {
             JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
-
-            JRField[] fields = jasperReport.getFields();
-
-            NSMutableArray<String> keypaths = new NSMutableArray<String>();
-
-            for (JRField field : fields) {
-                keypaths.add(field.getName());
-            }
-
-            JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
 
             JRSwapFile swapFile = new JRSwapFile("/tmp", 1024, 1024);
 
@@ -82,7 +73,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
 
             parameters.put(JRParameter.REPORT_VIRTUALIZER, virtualizer);
 
-            print = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+            JasperPrint print = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             if (Format.XLS.equals(format)) {
                 JRExporter exporter = new JRXlsExporter();
@@ -121,28 +112,45 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
     }
 
     @Override
-    protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
-        byte[] data = null;
-
-        JasperPrint print = null;
-
+    public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
         URL url = model.templateLocation();
 
         if (url == null) {
-            return null;
+            return;
         }
 
+        JasperReport jasperReport;
+
         try {
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
-
-            print = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
-
-            data = JasperExportManager.exportReportToPdf(print);
-
+            jasperReport = (JasperReport) JRLoader.loadObject(url);
         } catch (JRException exception) {
             throw new ReportProcessingException(exception);
         }
 
-        return data;
+        JRField[] fields = jasperReport.getFields();
+
+        NSMutableArray<String> keypaths = new NSMutableArray<String>();
+
+        for (JRField field : fields) {
+            keypaths.add(field.getName());
+        }
+
+        JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+
+        prepareReport(format, model, parameters, dataSource);
+    }
+
+    @Override
+    public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
+        url = model.templateLocation();
+
+        if (url == null) {
+            return;
+        }
+
+        this.format = format;
+        this.parameters = parameters;
+        this.dataSource = dataSource;
+        isPrepared = true;
     }
 }

@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JasperPrint;
 
 import org.junit.Before;
@@ -60,7 +61,8 @@ public class TestJasperReportProcessorForJava {
         Mockito.doReturn(mockTemplate.getClass()).when(mockModel).javaClassTemplate();
         Mockito.doReturn(mockTemplate).when(processor).objectForClass((Class<? extends ReportTemplate<?>>) mockTemplate.getClass());
 
-        processor.handleProcessing(Format.PDF, mockModel, null, null);
+        processor.prepareReport(Format.PDF, mockModel, null, (JRDataSource) null);
+        processor.generateReport();
 
         Mockito.verify(mockTemplate).build(mockModel);
         Mockito.verify(mockExporter).export(Mockito.any(JasperPrint.class));
@@ -70,7 +72,9 @@ public class TestJasperReportProcessorForJava {
     public void returnNullIfNoJavaTemplateDefined() throws Exception {
         Mockito.doReturn(null).when(mockModel).javaClassTemplate();
 
-        byte[] result = processor.handleProcessing(Format.PDF, mockModel, null, null);
+        processor.prepareReport(Format.PDF, mockModel, null, (JRDataSource) null);
+
+        byte[] result = processor.generateReport();
 
         assertThat(result, nullValue());
     }

@@ -64,12 +64,14 @@ import er.extensions.localization.ERXLocalizer;
  */
 public class JasperReportProcessorForModel extends AbstractReportProcessor {
     private final Provider<DynamicReportBuilder> builderProvider;
-
     private final Provider<EOEditingContext> editingContextProvider;
-
     private final Provider<ERXLocalizer> localizerProvider;
-
     private final Provider<Style> styleProvider;
+    private DynamicReportBuilder builder;
+    private Format format;
+    private Map<String, Object> parameters;
+    private JRDataSource dataSource;
+    private boolean isPrepared = false;
 
     @Inject
     public JasperReportProcessorForModel(Provider<EOEditingContext> editingContextProvider, Provider<ERXLocalizer> localizerProvider, Provider<DynamicReportBuilder> builderProvider, Provider<Style> styleProvider) {
@@ -82,72 +84,16 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
     }
 
     @Override
-    protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
+    public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
         JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
 
-        return handleProcessing(format, model, parameters, dataSource);
+        prepareReport(format, model, parameters, dataSource);
     }
 
     @Override
-    protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
-        if (model.baseEntity() == null) {
+    public byte[] generateReport() throws ReportProcessingException {
+        if (!isPrepared) {
             return null;
-        }
-
-        DynamicReportBuilder builder = builderProvider.get();
-
-        builder.setTitle(model.title()).setSubtitle(model.subtitle());
-
-        EOEntity entity = model.baseEntity();
-
-        for (ReportColumn column : model.columns()) {
-            EOAttribute attribute = entity._attributeForPath(column.keypath());
-
-            if (attribute == null) {
-                throw new ReportProcessingException("Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling.");
-            }
-
-            String classname = attribute.adaptorValueClass().getName();
-
-            if (NSTimestamp.class.getName().equals(classname)) {
-                classname = Date.class.getName();
-            }
-
-            String columnTitle = titleForColumn(entity, column);
-
-            ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(column.pattern());
-
-            if (column.width() != null) {
-                columnBuilder.setWidth(column.width());
-                columnBuilder.setFixedWidth(false);
-            }
-
-            processColumnStyle(column, columnBuilder, classname);
-            processCustomExpression(column, columnBuilder, builder);
-
-            AbstractColumn djColumn = null;
-
-            try {
-                djColumn = columnBuilder.build();
-            } catch (ColumnBuilderException exception) {
-                throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
-            }
-
-            if (column.hidden()) {
-                builder.addField(column.title(), classname);
-            } else {
-                builder.addColumn(djColumn);
-            }
-
-            if (column.groupedBy()) {
-                GroupBuilder groupBuilder = new GroupBuilder();
-
-                DJGroup group = groupBuilder.setCriteriaColumn((PropertyColumn) djColumn).setGroupLayout(GroupLayout.VALUE_IN_HEADER_WITH_HEADERS).build();
-
-                builder.addGroup(group);
-
-                builder.setPrintColumnNames(false);
-            }
         }
 
         JRSwapFile swapFile = new JRSwapFile("/tmp", 1024, 1024);
@@ -207,6 +153,73 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
         }
     }
 
+    @Override
+    public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
+        if (model.baseEntity() == null) {
+            return;
+        }
+
+        this.format = format;
+        this.parameters = parameters;
+        this.dataSource = dataSource;
+
+        builder = builderProvider.get();
+
+        builder.setTitle(model.title()).setSubtitle(model.subtitle());
+
+        EOEntity entity = model.baseEntity();
+
+        for (ReportColumn column : model.columns()) {
+            EOAttribute attribute = entity._attributeForPath(column.keypath());
+
+            if (attribute == null) {
+                throw new ReportProcessingException("Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling.");
+            }
+
+            String classname = attribute.adaptorValueClass().getName();
+
+            if (NSTimestamp.class.getName().equals(classname)) {
+                classname = Date.class.getName();
+            }
+
+            String columnTitle = titleForColumn(entity, column);
+
+            ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(column.pattern());
+
+            if (column.width() != null) {
+                columnBuilder.setWidth(column.width());
+                columnBuilder.setFixedWidth(false);
+            }
+
+            processColumnStyle(column, columnBuilder, classname);
+            processCustomExpression(column, columnBuilder, builder);
+
+            AbstractColumn djColumn = null;
+
+            try {
+                djColumn = columnBuilder.build();
+            } catch (ColumnBuilderException exception) {
+                throw new ReportProcessingException("An unexpected error occurred while trying to build the report.", exception);
+            }
+
+            if (column.hidden()) {
+                builder.addField(column.title(), classname);
+            } else {
+                builder.addColumn(djColumn);
+            }
+
+            if (column.groupedBy()) {
+                GroupBuilder groupBuilder = new GroupBuilder();
+
+                DJGroup group = groupBuilder.setCriteriaColumn((PropertyColumn) djColumn).setGroupLayout(GroupLayout.VALUE_IN_HEADER_WITH_HEADERS).build();
+
+                builder.addGroup(group);
+
+                builder.setPrintColumnNames(false);
+            }
+        }
+    }
+
     private void processColumnStyle(ReportColumn column, ColumnBuilder columnBuilder, String classname) throws ReportProcessingException {
         Style style = styleProvider.get();
 
@@ -262,6 +275,8 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
         }
 
         columnBuilder.setStyle(style);
+
+        isPrepared = true;
     }
 
     private void processCustomExpression(ReportColumn column, ColumnBuilder columnBuilder, DynamicReportBuilder reportBuilder) throws ReportProcessingException {

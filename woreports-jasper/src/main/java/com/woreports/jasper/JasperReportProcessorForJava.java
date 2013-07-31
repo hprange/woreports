@@ -21,6 +21,8 @@ import com.woreports.api.ReportTemplate;
  */
 public class JasperReportProcessorForJava extends AbstractReportProcessor {
     private final ReportExporter<JasperPrint> exporter;
+    private JasperPrint print;
+    private boolean isPrepared = false;
 
     @Inject
     public JasperReportProcessorForJava(ReportExporter<JasperPrint> exporter) {
@@ -30,21 +32,30 @@ public class JasperReportProcessorForJava extends AbstractReportProcessor {
     }
 
     @Override
-    protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
-        return handleProcessing(format, model, parameters, null);
+    public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
+        prepareReport(format, model, parameters, (JRDataSource) null);
     }
 
     @Override
-    protected byte[] handleProcessing(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
+    public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
         Class<? extends ReportTemplate<?>> templateClass = model.javaClassTemplate();
 
         if (templateClass == null) {
-            return null;
+            return;
         }
 
         ReportTemplate<JasperPrint> template = objectForClass(templateClass);
 
-        JasperPrint print = template.build(model);
+        print = template.build(model);
+
+        isPrepared = true;
+    }
+
+    @Override
+    public byte[] generateReport() throws ReportProcessingException {
+        if (!isPrepared) {
+            return null;
+        }
 
         return exporter.export(print);
     }
