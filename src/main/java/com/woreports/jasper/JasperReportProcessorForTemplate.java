@@ -2,6 +2,7 @@ package com.woreports.jasper;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRField;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
+import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -42,6 +44,22 @@ import com.woreports.api.ReportProcessingException;
  *         Parreira</a>
  */
 public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
+    private static JasperReport loadJasperReport(URL url) throws ReportProcessingException {
+        JasperReport jasperReport;
+
+        try (InputStream in = url.openStream()) {
+            if (url.toExternalForm().endsWith(".jrxml")) {
+                jasperReport = JasperCompileManager.compileReport(in);
+            } else {
+                jasperReport = (JasperReport) JRLoader.loadObject(in);
+            }
+        } catch (JRException | IOException exception) {
+            throw new ReportProcessingException(exception);
+        }
+
+        return jasperReport;
+    }
+
     private final Provider<EOEditingContext> editingContextProvider;
     private URL url;
     private Map<String, Object> parameters;
@@ -65,7 +83,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
         byte[] data = null;
 
         try {
-            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(url);
+            JasperReport jasperReport = loadJasperReport(url);
 
             JRSwapFile swapFile = new JRSwapFile("/tmp", 1024, 1024);
 
@@ -119,13 +137,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
             return;
         }
 
-        JasperReport jasperReport;
-
-        try {
-            jasperReport = (JasperReport) JRLoader.loadObject(url);
-        } catch (JRException exception) {
-            throw new ReportProcessingException(exception);
-        }
+        JasperReport jasperReport = loadJasperReport(url);
 
         JRField[] fields = jasperReport.getFields();
 
