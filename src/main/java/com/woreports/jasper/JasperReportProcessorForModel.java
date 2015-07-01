@@ -55,6 +55,7 @@ import com.woreports.api.Format;
 import com.woreports.api.ReportColumn;
 import com.woreports.api.ReportModel;
 import com.woreports.api.ReportProcessingException;
+import com.woreports.api.WOReports;
 import com.woreports.localization.LocalizerKeyGenerator;
 
 import er.extensions.localization.ERXLocalizer;
@@ -74,7 +75,7 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
     private boolean isPrepared = false;
 
     @Inject
-    public JasperReportProcessorForModel(Provider<EOEditingContext> editingContextProvider, Provider<ERXLocalizer> localizerProvider, Provider<DynamicReportBuilder> builderProvider, Provider<Style> styleProvider) {
+    public JasperReportProcessorForModel(@WOReports Provider<EOEditingContext> editingContextProvider, Provider<ERXLocalizer> localizerProvider, Provider<DynamicReportBuilder> builderProvider, Provider<Style> styleProvider) {
         super();
 
         this.editingContextProvider = editingContextProvider;

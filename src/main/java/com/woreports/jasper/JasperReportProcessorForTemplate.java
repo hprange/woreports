@@ -38,6 +38,7 @@ import com.woreports.api.AbstractReportProcessor;
 import com.woreports.api.Format;
 import com.woreports.api.ReportModel;
 import com.woreports.api.ReportProcessingException;
+import com.woreports.api.WOReports;
 
 /**
  * @author <a href="mailto:alexandre.parreira@doit.com.br">Alexandre
@@ -68,7 +69,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
     private boolean isPrepared = false;
 
     @Inject
-    public JasperReportProcessorForTemplate(Provider<EOEditingContext> editingContextProvider) {
+    public JasperReportProcessorForTemplate(@WOReports Provider<EOEditingContext> editingContextProvider) {
         super();
 
         this.editingContextProvider = editingContextProvider;
