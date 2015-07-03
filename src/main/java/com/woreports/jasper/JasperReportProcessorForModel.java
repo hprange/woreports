@@ -177,7 +177,7 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
                 throw new ReportProcessingException("Cannot find an EOAttribute for the keypath '" + column.keypath() + "' in " + entity.name() + " entity. Are you sure it is an attribute and not a relationship? Also check the spelling.");
             }
 
-            String classname = attribute.adaptorValueClass().getName();
+            String classname = attribute.valueTypeClassName();
 
             if (NSTimestamp.class.getName().equals(classname)) {
                 classname = Date.class.getName();
