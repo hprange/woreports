@@ -1,4 +1,4 @@
-package com.woreports.jasper;
+package com.woreports.jasper.data;
 
 import java.util.List;
 

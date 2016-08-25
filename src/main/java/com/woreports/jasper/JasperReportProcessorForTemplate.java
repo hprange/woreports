@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Map;
 
+import com.woreports.jasper.data.JasperEOBatchDataSource;
+
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExporter;
@@ -148,7 +150,7 @@ public class JasperReportProcessorForTemplate extends AbstractReportProcessor {
             keypaths.add(field.getName());
         }
 
-        JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+        JRDataSource dataSource = new JasperEOBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), keypaths, qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
 
         prepareReport(format, model, parameters, dataSource);
     }

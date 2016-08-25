@@ -1,4 +1,4 @@
-package com.woreports.jasper;
+package com.woreports.jasper.data;
 
 import static er.extensions.eof.ERXEOControlUtilities.objectsForGlobalIDs;
 import net.sf.jasperreports.engine.JRDataSource;

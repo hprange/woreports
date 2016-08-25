@@ -1,8 +1,4 @@
-package com.woreports.jasper;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRField;
+package com.woreports.jasper.data;
 
 import org.apache.commons.lang.Validate;
 
@@ -14,6 +10,10 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
 
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
+
 /**
  * EOF implementation of Jasper data source. This class provides a way to
  * iterate over objects fetched through an <code>EOEditingContext</code>.
@@ -24,7 +24,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
  * If you have a model like this:
  * 
  * <pre>
- * EntityA        ->      EntityB
+ * EntityA        -&gt;      EntityB
  *   |-attributeA           |-attributeB
  *   `-relationshipToB
  * </pre>
@@ -40,7 +40,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
  * 
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperEofDataSource implements JRDataSource {
+public class JasperEODataSource implements JRDataSource {
     private final EOEditingContext editingContext;
 
     private final String entityName;
@@ -55,23 +55,23 @@ public class JasperEofDataSource implements JRDataSource {
 
     private final NSArray<EOSortOrdering> sortOrderings;
 
-    public JasperEofDataSource(EOEditingContext editingContext, String entityName) {
+    public JasperEODataSource(EOEditingContext editingContext, String entityName) {
         this(editingContext, entityName, null, null, null);
     }
 
-    public JasperEofDataSource(EOEditingContext editingContext, String entityName, EOQualifier qualifier) {
+    public JasperEODataSource(EOEditingContext editingContext, String entityName, EOQualifier qualifier) {
         this(editingContext, entityName, null, qualifier, null);
     }
 
-    public JasperEofDataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths) {
+    public JasperEODataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths) {
         this(editingContext, entityName, keyPaths, null, null);
     }
 
-    public JasperEofDataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths, EOQualifier qualifier) {
+    public JasperEODataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths, EOQualifier qualifier) {
         this(editingContext, entityName, keyPaths, qualifier, null);
     }
 
-    public JasperEofDataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) {
+    public JasperEODataSource(EOEditingContext editingContext, String entityName, NSArray<String> keyPaths, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) {
         Validate.notNull(editingContext, "Cannot create the data source with null editing context");
         Validate.notEmpty(entityName, "Cannot create the data source with null or empty entity name");
 

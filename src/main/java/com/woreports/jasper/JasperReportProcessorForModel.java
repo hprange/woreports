@@ -56,6 +56,7 @@ import com.woreports.api.ReportColumn;
 import com.woreports.api.ReportModel;
 import com.woreports.api.ReportProcessingException;
 import com.woreports.api.WOReports;
+import com.woreports.jasper.data.JasperEOBatchDataSource;
 import com.woreports.localization.LocalizerKeyGenerator;
 
 import er.extensions.localization.ERXLocalizer;
@@ -86,7 +87,7 @@ public class JasperReportProcessorForModel extends AbstractReportProcessor {
 
     @Override
     public void prepareReport(Format format, ReportModel model, Map<String, Object> parameters, EOQualifier qualifier, NSArray<EOSortOrdering> sortOrderings) throws ReportProcessingException {
-        JRDataSource dataSource = new JasperEofBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
+        JRDataSource dataSource = new JasperEOBatchDataSource(editingContextProvider.get(), model.baseEntity().name(), model.keyPaths(), qualifier, model.sortOrderings().arrayByAddingObjectsFromArray(sortOrderings));
 
         prepareReport(format, model, parameters, dataSource);
     }

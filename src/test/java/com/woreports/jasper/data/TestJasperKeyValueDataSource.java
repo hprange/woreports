@@ -1,4 +1,4 @@
-package com.woreports.jasper;
+package com.woreports.jasper.data;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -21,6 +21,7 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableDictionary;
+import com.woreports.jasper.data.JasperKeyValueDataSource;
 import com.woreports.model.Foo;
 import com.woreports.model.FooRelated;
 import com.woreports.model.StubObject;

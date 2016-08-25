@@ -1,4 +1,4 @@
-package com.woreports.jasper;
+package com.woreports.jasper.data;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -13,12 +13,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
+import com.woreports.jasper.data.JasperEODataSource;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 @RunWith(value = MockitoJUnitRunner.class)
-public class TestJasperEofDataSource {
+public class TestJasperEODataSource {
     protected static final String ENTITY_NAME = "entity";
 
     @Mock
@@ -27,7 +28,7 @@ public class TestJasperEofDataSource {
     @Test
     public void cannotCreateIfEditingContextIsNull() throws Exception {
         try {
-            new JasperEofDataSource(null, ENTITY_NAME);
+            new JasperEODataSource(null, ENTITY_NAME);
 
             fail();
         } catch (IllegalArgumentException exception) {
@@ -38,7 +39,7 @@ public class TestJasperEofDataSource {
     @Test
     public void cannotCreateIfEntityNameIsNull() throws Exception {
         try {
-            new JasperEofDataSource(mockEditingContext, null);
+            new JasperEODataSource(mockEditingContext, null);
 
             fail();
         } catch (IllegalArgumentException exception) {
@@ -48,7 +49,7 @@ public class TestJasperEofDataSource {
 
     @Test
     public void nextReturnsFalseIfHasNoObjects() throws Exception {
-        JasperEofDataSource dataSource = Mockito.spy(new JasperEofDataSource(mockEditingContext, ENTITY_NAME));
+        JasperEODataSource dataSource = Mockito.spy(new JasperEODataSource(mockEditingContext, ENTITY_NAME));
 
         Mockito.doReturn(NSArray.emptyArray()).when(dataSource).resultSet();
 
@@ -57,7 +58,7 @@ public class TestJasperEofDataSource {
 
     @Test
     public void nextReturnsTrueIfHasObjects() throws Exception {
-        JasperEofDataSource dataSource = Mockito.spy(new JasperEofDataSource(mockEditingContext, ENTITY_NAME));
+        JasperEODataSource dataSource = Mockito.spy(new JasperEODataSource(mockEditingContext, ENTITY_NAME));
 
         Mockito.doReturn(new NSArray<NSDictionary<String, ? extends Object>>(new NSDictionary<String, Object>())).when(dataSource).resultSet();
 
