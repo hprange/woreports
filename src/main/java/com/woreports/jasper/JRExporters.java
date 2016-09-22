@@ -16,7 +16,7 @@ class JRExporters {
         case PDF:
             return new JRPdfExporter();
 
-        case XLS:
+        case XLSX:
             JRExporter exporter = new JRXlsxExporter();
 
             exporter.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, true);

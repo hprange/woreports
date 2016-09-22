@@ -27,14 +27,14 @@ public class TestJRExporters {
 
     @Test
     public void createExcelExporterWhenCreatingExporterForXlsFormat() throws Exception {
-        JRExporter result = JRExporters.of(Format.XLS);
+        JRExporter result = JRExporters.of(Format.XLSX);
 
         assertThat(result, instanceOf(JRXlsxExporter.class));
     }
 
     @Test
     public void initializeExcelExporterWhenCreatingExporterForXlsFormat() throws Exception {
-        JRExporter result = JRExporters.of(Format.XLS);
+        JRExporter result = JRExporters.of(Format.XLSX);
 
         assertThat(result.getParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS), is((Object) true));
         assertThat(result.getParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN), is((Object) true));

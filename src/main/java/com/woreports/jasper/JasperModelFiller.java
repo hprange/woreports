@@ -112,7 +112,7 @@ public class JasperModelFiller implements JasperFiller {
             }
         }
 
-        if (format == Format.XLS) {
+        if (format == Format.XLSX) {
             builder.setPrintColumnNames(true);
             builder.setIgnorePagination(true);
         }
@@ -127,7 +127,7 @@ public class JasperModelFiller implements JasperFiller {
         // TODO: Locale should be parameterized
         dr.setReportLocale(new Locale("pt", "BR"));
 
-        LayoutManager layoutManager = format == Format.XLS ? new ListLayoutManager() : new ClassicLayoutManager();
+        LayoutManager layoutManager = format == Format.XLSX ? new ListLayoutManager() : new ClassicLayoutManager();
 
         try {
             return DynamicJasperHelper.generateJasperPrint(dr, layoutManager, dataSource, parameters);
