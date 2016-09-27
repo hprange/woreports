@@ -2,13 +2,13 @@ package com.woreports.jasper.data;
 
 import java.util.List;
 
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRField;
-
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSKeyValueCodingAdditions;
+
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRField;
 
 /**
  * Implementation of <code>JRDataSource</code> to support
@@ -17,13 +17,13 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
  * and collect the required data through keyValue coding pattern.
  * <p>
  * You can map Jasper fields to properties and relationships from the
- * <code>EOEnterpriseObject<code>s provided. You must follow the
+ * <code>EOEnterpriseObject</code>s provided. You must follow the
  * same pattern used for keyPath navigation.
  * <p>
  * If you have two objects like these:
  * 
  * <pre>
- * Foo            ->       FooRelated
+ * Foo            -&gt;       FooRelated
  *  |-bar                    `-relatedBar
  *  `-relatedRelationship
  * </pre>

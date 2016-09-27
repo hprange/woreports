@@ -1,7 +1,7 @@
 package com.woreports.api;
 
 import static com.woreports.api.Format.PDF;
-import static com.woreports.api.Format.XLS;
+import static com.woreports.api.Format.XLSX;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -20,7 +20,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestFormat {
     @Parameters
     public static Collection<Object[]> parameters() {
-        return Arrays.asList(new Object[][] { { PDF, "application/pdf" }, { XLS, "application/vnd.ms-excel" } });
+        return Arrays.asList(new Object[][] { { PDF, "application/pdf" }, { XLSX, "application/vnd.ms-excel" } });
     }
 
     private final Format format;

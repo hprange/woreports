@@ -14,8 +14,6 @@ public interface ReportModel {
 
     public NSArray<? extends ReportColumn> columns();
 
-    public Class<? extends ReportTemplate<?>> javaClassTemplate();
-
     public NSArray<String> keyPaths();
 
     public NSArray<EOSortOrdering> sortOrderings();

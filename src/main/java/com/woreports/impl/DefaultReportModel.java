@@ -8,7 +8,6 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSMutableArray;
 import com.woreports.api.ReportColumn;
 import com.woreports.api.ReportModel;
-import com.woreports.api.ReportTemplate;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
@@ -17,8 +16,6 @@ public class DefaultReportModel implements ReportModel {
     private EOEntity baseEntity;
 
     private final NSMutableArray<ReportColumn> columns = new NSMutableArray<ReportColumn>();
-
-    private Class<? extends ReportTemplate<?>> javaClassTemplate;
 
     private final NSMutableArray<EOSortOrdering> sortOrderings = new NSMutableArray<EOSortOrdering>();
 
@@ -47,11 +44,6 @@ public class DefaultReportModel implements ReportModel {
     }
 
     @Override
-    public Class<? extends ReportTemplate<?>> javaClassTemplate() {
-        return javaClassTemplate;
-    }
-
-    @Override
     @SuppressWarnings("unchecked")
     public NSArray<String> keyPaths() {
         return (NSArray<String>) columns.valueForKeyPath("keypath");
@@ -59,10 +51,6 @@ public class DefaultReportModel implements ReportModel {
 
     public void setBaseEntity(EOEntity baseEntity) {
         this.baseEntity = baseEntity;
-    }
-
-    public void setJavaClassTemplate(Class<? extends ReportTemplate<?>> javaClassTemplate) {
-        this.javaClassTemplate = javaClassTemplate;
     }
 
     public void setSubtitle(String subtitle) {
