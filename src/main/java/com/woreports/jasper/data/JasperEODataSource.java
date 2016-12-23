@@ -13,6 +13,7 @@ import com.webobjects.foundation.NSKeyValueCoding;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.JRRewindableDataSource;
 
 /**
  * EOF implementation of Jasper data source. This class provides a way to
@@ -37,10 +38,13 @@ import net.sf.jasperreports.engine.JRField;
  * <p>
  * The raw row option is activated while fetching data to reduce memory
  * consumption.
- * 
+ * <p>
+ * This class implements the {@code JRRewindableDataSource} interface, allowing the iteration to go back to the first
+ * element.
+ *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperEODataSource implements JRDataSource {
+public class JasperEODataSource implements JRDataSource, JRRewindableDataSource {
     private final EOEditingContext editingContext;
 
     private final String entityName;
@@ -93,6 +97,11 @@ public class JasperEODataSource implements JRDataSource {
         }
 
         return value;
+    }
+
+    @Override
+    public void moveFirst() throws JRException {
+        index = -1;
     }
 
     @Override

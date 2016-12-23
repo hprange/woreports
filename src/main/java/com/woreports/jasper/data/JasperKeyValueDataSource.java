@@ -9,6 +9,7 @@ import com.webobjects.foundation.NSKeyValueCodingAdditions;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.JRRewindableDataSource;
 
 /**
  * Implementation of <code>JRDataSource</code> to support
@@ -35,10 +36,13 @@ import net.sf.jasperreports.engine.JRField;
  * </ul>
  * <p>
  * This class also supports objects that do not implement the NSKeyValueCoding interface.
- * 
+ * <p>
+ * This class implements the {@code JRRewindableDataSource} interface, allowing the iteration to go back to the first
+ * element.
+ *
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
-public class JasperKeyValueDataSource implements JRDataSource {
+public class JasperKeyValueDataSource implements JRDataSource, JRRewindableDataSource {
     private int index = -1;
 
     private final List<? extends Object> objects;
@@ -62,6 +66,11 @@ public class JasperKeyValueDataSource implements JRDataSource {
         Object value = NSKeyValueCodingAdditions.Utility.valueForKeyPath(object, field.getName());
 
         return value == NSKeyValueCoding.NullValue ? null : value;
+    }
+
+    @Override
+    public void moveFirst() throws JRException {
+        index = -1;
     }
 
     @Override
