@@ -4,16 +4,16 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.webobjects.eocontrol.EOEditingContext;
 import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
-import com.woreports.jasper.data.JasperEODataSource;
+import com.woreports.model.Foo;
+import com.wounit.rules.MockEditingContext;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
@@ -22,8 +22,8 @@ import com.woreports.jasper.data.JasperEODataSource;
 public class TestJasperEODataSource {
     protected static final String ENTITY_NAME = "entity";
 
-    @Mock
-    protected EOEditingContext mockEditingContext;
+    @Rule
+    public MockEditingContext mockEditingContext = new MockEditingContext("Sample");
 
     @Test
     public void cannotCreateIfEditingContextIsNull() throws Exception {
@@ -61,6 +61,20 @@ public class TestJasperEODataSource {
         JasperEODataSource dataSource = Mockito.spy(new JasperEODataSource(mockEditingContext, ENTITY_NAME));
 
         Mockito.doReturn(new NSArray<NSDictionary<String, ? extends Object>>(new NSDictionary<String, Object>())).when(dataSource).resultSet();
+
+        assertThat(dataSource.next(), is(true));
+    }
+
+    @Test
+    public void rewindToFirstElement() throws Exception {
+        mockEditingContext.createSavedObject(Foo.class);
+
+        JasperEODataSource dataSource = new JasperEODataSource(mockEditingContext, Foo.ENTITY_NAME);
+
+        dataSource.next();
+        dataSource.next();
+
+        dataSource.moveFirst();
 
         assertThat(dataSource.next(), is(true));
     }

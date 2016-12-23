@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import net.sf.jasperreports.engine.JRField;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,11 +20,12 @@ import com.webobjects.foundation.NSArray;
 import com.webobjects.foundation.NSDictionary;
 import com.webobjects.foundation.NSKeyValueCoding;
 import com.webobjects.foundation.NSMutableDictionary;
-import com.woreports.jasper.data.JasperKeyValueDataSource;
 import com.woreports.model.Foo;
 import com.woreports.model.FooRelated;
 import com.woreports.model.StubObject;
 import com.wounit.rules.MockEditingContext;
+
+import net.sf.jasperreports.engine.JRField;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
@@ -188,6 +188,16 @@ public class TestJasperKeyValueDataSource {
     public void iterateOverOneRecord() throws Exception {
         assertThat(dataSource.next(), is(true));
         assertThat(dataSource.next(), is(false));
+    }
+
+    @Test
+    public void rewindToFirstElement() throws Exception {
+        dataSource.next();
+        dataSource.next();
+
+        dataSource.moveFirst();
+
+        assertThat(dataSource.next(), is(true));
     }
 
     @Before
