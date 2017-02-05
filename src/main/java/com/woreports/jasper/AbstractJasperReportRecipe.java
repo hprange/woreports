@@ -1,6 +1,9 @@
 package com.woreports.jasper;
 
+import static java.util.Arrays.asList;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +18,7 @@ import com.woreports.api.ReportModel;
 import com.woreports.api.ReportProcessingException;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRVirtualizer;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -47,6 +51,12 @@ public abstract class AbstractJasperReportRecipe implements JasperReportRecipe {
 
     @Override
     public final byte[] generateReportIn(Format format) throws ReportProcessingException {
+        if (inputs.isEmpty()) {
+            JasperPrint print = filler(format).fillReport(new HashMap<String, Object>(), new JREmptyDataSource(0));
+
+            return new JasperReportGenerator(asList(print)).generateReport(format);
+        }
+
         List<JasperPrint> prints = new ArrayList<>(inputs.size());
 
         for (JasperReportInput input : inputs) {
