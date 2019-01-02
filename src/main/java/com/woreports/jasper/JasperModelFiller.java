@@ -3,7 +3,6 @@ package com.woreports.jasper;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -123,9 +122,7 @@ public class JasperModelFiller implements JasperFiller {
     @Override
     public JasperPrint fillReport(Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
         DynamicReport dr = builder.build();
-
-        // TODO: Locale should be parameterized
-        dr.setReportLocale(new Locale("pt", "BR"));
+        dr.setReportLocale(localizer.locale());
 
         LayoutManager layoutManager = format == Format.XLSX ? new ListLayoutManager() : new ClassicLayoutManager();
 
