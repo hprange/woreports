@@ -12,6 +12,7 @@
 		<wonder.version>6.1</wonder.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<project.scm.id>github</project.scm.id>
 	</properties>
 
 	<dependencies>
@@ -143,11 +144,10 @@
 	</build>
 
 	<scm>
-		<connection>scm:git:git@github.com:hprange/woreports.git</connection>
-		<url>scm:git:git@github.com:hprange/woreports.git</url>
-		<developerConnection>scm:git:git@github.com:hprange/woreports.git</developerConnection>
-    <tag>HEAD</tag>
-  </scm>
+		<connection>scm:git:https://github.com/hprange/woreports.git</connection>
+		<url>scm:git:https://github.com/hprange/woreports.git</url>
+		<developerConnection>scm:git:https://github.com/hprange/woreports.git</developerConnection>
+	</scm>
 	
 	<distributionManagement>
 		<repository>
