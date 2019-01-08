@@ -3,7 +3,6 @@ package com.woreports.jasper;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -18,6 +17,7 @@ import com.woreports.api.Format;
 import com.woreports.api.ReportColumn;
 import com.woreports.api.ReportModel;
 import com.woreports.api.ReportProcessingException;
+import com.woreports.custom.JasperReportColumnCustomizer;
 import com.woreports.localization.LocalizerKeyGenerator;
 
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
@@ -51,11 +51,10 @@ public class JasperModelFiller implements JasperFiller {
     private final Provider<Style> styleProvider;
 
     @Inject
-    public JasperModelFiller(Provider<Style> styleProvider, ERXLocalizer localizer, @Assisted ReportModel model, @Assisted Format format) throws ReportProcessingException {
+    public JasperModelFiller(Provider<Style> styleProvider, ERXLocalizer localizer, @Assisted ReportModel model, @Assisted Format format, JasperReportColumnCustomizer columnCustomizer) throws ReportProcessingException {
         this.styleProvider = styleProvider;
         this.localizer = localizer;
         this.format = format;
-
         DynamicReportBuilder builder = new DynamicReportBuilder();
 
         builder.setTitle(model.title()).setSubtitle(model.subtitle());
@@ -77,7 +76,7 @@ public class JasperModelFiller implements JasperFiller {
 
             String columnTitle = titleForColumn(entity, column);
 
-            ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(column.pattern());
+            ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(columnCustomizer.patternFor(column));
 
             if (column.width() != null) {
                 columnBuilder.setWidth(column.width());
@@ -123,9 +122,7 @@ public class JasperModelFiller implements JasperFiller {
     @Override
     public JasperPrint fillReport(Map<String, Object> parameters, JRDataSource dataSource) throws ReportProcessingException {
         DynamicReport dr = builder.build();
-
-        // TODO: Locale should be parameterized
-        dr.setReportLocale(new Locale("pt", "BR"));
+        dr.setReportLocale(localizer.locale());
 
         LayoutManager layoutManager = format == Format.XLSX ? new ListLayoutManager() : new ClassicLayoutManager();
 
