@@ -24,10 +24,10 @@ public class JasperReportColumnCustomizer {
     }
 
     /**
-     *
      * @param column
-     * @return This method returns a pattern to be applied, if a <code>Provider<String></code> named
-     *         <code>@Named("datePattern")</code> is informed, then its value will be returned. In other cases, the
+     *            the report column configuration
+     * @return This method returns a pattern to be applied, if a {@code Provider<String>} named
+     *         {@code @Named("datePattern")} is informed, then its value will be returned. In other cases, the
      *         informed column pattern will be returned.
      */
     public String patternFor(ReportColumn column) {
