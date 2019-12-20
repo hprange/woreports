@@ -36,6 +36,7 @@ import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.entities.DJGroup;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
 import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
+import er.extensions.crypting.ERXCryptoString;
 import er.extensions.localization.ERXLocalizer;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -72,6 +73,10 @@ public class JasperModelFiller implements JasperFiller {
 
             if (NSTimestamp.class.getName().equals(classname)) {
                 classname = Date.class.getName();
+            }
+
+            if (ERXCryptoString.class.getSimpleName().equals(classname)) {
+                classname = String.class.getName();
             }
 
             String columnTitle = titleForColumn(entity, column);
