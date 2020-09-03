@@ -41,7 +41,6 @@ public class JasperEOGlobaIDDataSource implements JRDataSource, JRRewindableData
         this.globalIds = globalIds;
     }
 
-    @SuppressWarnings("unchecked")
     private JasperKeyValueDataSource dataSource() {
         if (dataSource == null) {
             EOEditingContext editingContext = editingContextFactory._newEditingContext();

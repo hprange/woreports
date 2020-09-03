@@ -48,7 +48,7 @@ import net.sf.jasperreports.engine.JRRewindableDataSource;
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 public class JasperEOBatchDataSource implements JRDataSource, JRRewindableDataSource {
-    private final ERXFetchSpecificationBatchIterator iterator;
+    private final ERXFetchSpecificationBatchIterator<NSDictionary<String, Object>> iterator;
 
     private NSDictionary<String, Object> row;
 
@@ -80,7 +80,7 @@ public class JasperEOBatchDataSource implements JRDataSource, JRRewindableDataSo
             fetchSpecification.setRawRowKeyPaths(keyPaths);
         }
 
-        iterator = new ERXFetchSpecificationBatchIterator(fetchSpecification, editingContext);
+        iterator = new ERXFetchSpecificationBatchIterator<>(fetchSpecification, editingContext);
 
     }
 
@@ -97,12 +97,11 @@ public class JasperEOBatchDataSource implements JRDataSource, JRRewindableDataSo
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public boolean next() throws JRException {
         boolean hasNext = iterator.hasNext();
 
         if (hasNext) {
-            row = (NSDictionary<String, Object>) iterator.next();
+            row = iterator.next();
         }
 
         return hasNext;

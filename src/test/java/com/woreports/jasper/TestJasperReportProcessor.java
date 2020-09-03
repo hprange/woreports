@@ -9,8 +9,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import com.woreports.api.ReportModel;
-import com.woreports.jasper.JasperReportProcessor;
-import com.woreports.jasper.JasperReportRecipeFactory;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
