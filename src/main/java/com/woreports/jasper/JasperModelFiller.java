@@ -138,6 +138,8 @@ public class JasperModelFiller implements JasperFiller {
         }
     }
 
+    // No replacement for the HorizontalAlign class was provided in the last version of Dynamic Jasper.
+    @SuppressWarnings("deprecation")
     private void processColumnStyle(ReportColumn column, ColumnBuilder columnBuilder, String classname) throws ReportProcessingException {
         Style style = styleProvider.get();
 

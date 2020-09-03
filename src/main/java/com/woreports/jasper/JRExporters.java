@@ -2,36 +2,42 @@ package com.woreports.jasper;
 
 import com.woreports.api.Format;
 
-import net.sf.jasperreports.engine.JRExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.ExporterInput;
+import net.sf.jasperreports.export.OutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 class JRExporters {
-    static JRExporter of(Format format) {
+    static Exporter<ExporterInput, ?, ?, OutputStreamExporterOutput> of(Format format) {
         switch (format) {
-        case PDF:
-            return new JRPdfExporter();
+            case PDF:
+                return new JRPdfExporter();
 
-        case XLSX:
-            JRExporter exporter = new JRXlsxExporter();
+            case XLSX:
+                JRXlsxExporter exporter = new JRXlsxExporter();
 
-            exporter.setParameter(JRXlsExporterParameter.IGNORE_PAGE_MARGINS, true);
-            exporter.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, true);
-            exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, true);
-            exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, true);
-            exporter.setParameter(JRXlsExporterParameter.IS_ONE_PAGE_PER_SHEET, false);
-            exporter.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, true);
-            exporter.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, false);
-            exporter.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, true);
-            exporter.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, true);
+                SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
 
-            return exporter;
-        default:
-            throw new UnsupportedOperationException("Unable to create a exporter for format " + format);
+                configuration.setIgnorePageMargins(true);
+                configuration.setCollapseRowSpan(true);
+                configuration.setRemoveEmptySpaceBetweenColumns(true);
+                configuration.setRemoveEmptySpaceBetweenRows(true);
+                configuration.setOnePagePerSheet(false);
+                configuration.setRemoveEmptySpaceBetweenRows(true);
+                configuration.setWhitePageBackground(false);
+                configuration.setIgnoreGraphics(true);
+                configuration.setDetectCellType(true);
+
+                exporter.setConfiguration(configuration);
+
+                return exporter;
+            default:
+                throw new UnsupportedOperationException("Unable to create a exporter for format " + format);
         }
     }
 
