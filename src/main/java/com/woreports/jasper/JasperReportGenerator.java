@@ -7,10 +7,12 @@ import com.woreports.api.Format;
 import com.woreports.api.ReportProcessingException;
 
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
+import net.sf.jasperreports.export.Exporter;
+import net.sf.jasperreports.export.ExporterInput;
+import net.sf.jasperreports.export.OutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 
 /**
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
@@ -25,10 +27,10 @@ class JasperReportGenerator {
     byte[] generateReport(Format format) throws ReportProcessingException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-        JRExporter exporter = JRExporters.of(format);
+        Exporter<ExporterInput, ?, ?, OutputStreamExporterOutput> exporter = JRExporters.of(format);
 
-        exporter.setParameter(JRPdfExporterParameter.JASPER_PRINT_LIST, prints);
-        exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, baos);
+        exporter.setExporterInput(SimpleExporterInput.getInstance(prints));
+        exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
 
         try {
             exporter.exportReport();
