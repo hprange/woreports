@@ -2,3 +2,5 @@ target
 build
 .classpath
 .project
+.idea
+woreports.iml
