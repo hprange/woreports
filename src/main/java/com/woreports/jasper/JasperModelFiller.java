@@ -2,6 +2,7 @@ package com.woreports.jasper;
 
 import java.awt.Color;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Map;
 
@@ -79,9 +80,17 @@ public class JasperModelFiller implements JasperFiller {
                 classname = String.class.getName();
             }
 
-            String columnTitle = titleForColumn(entity, column);
+            if (LocalDate.class.getSimpleName().equals(classname)) {
+                classname = LocalDate.class.getName();
+            }
 
-            ColumnBuilder columnBuilder = ColumnBuilder.getNew().setColumnProperty(column.keypath(), classname).setTitle(columnTitle).setPattern(columnCustomizer.patternFor(column));
+            String columnTitle = titleForColumn(entity, column);
+            String pattern = columnCustomizer.patternFor(column);
+
+            ColumnBuilder columnBuilder = ColumnBuilder.getNew()
+                                                       .setColumnProperty(column.keypath(), classname)
+                                                       .setTitle(columnTitle)
+                                                       .setPattern(pattern);
 
             if (column.width() != null) {
                 columnBuilder.setWidth(column.width());
