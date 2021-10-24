@@ -1,6 +1,7 @@
 package com.woreports.jasper;
 
 import java.awt.Color;
+import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
@@ -98,7 +99,7 @@ public class JasperModelFiller implements JasperFiller {
             }
 
             processColumnStyle(column, columnBuilder, classname);
-            processCustomExpression(column, columnBuilder, builder);
+            processCustomExpression(model, column, columnBuilder, builder);
 
             AbstractColumn djColumn = null;
 
@@ -206,7 +207,7 @@ public class JasperModelFiller implements JasperFiller {
         columnBuilder.setStyle(style);
     }
 
-    private void processCustomExpression(ReportColumn column, ColumnBuilder columnBuilder, DynamicReportBuilder reportBuilder) throws ReportProcessingException {
+    private void processCustomExpression(ReportModel model, ReportColumn column, ColumnBuilder columnBuilder, DynamicReportBuilder reportBuilder) throws ReportProcessingException {
         Class<? extends CustomExpression> customExpressionClass = column.customExpressionClass();
 
         if (customExpressionClass == null) {
@@ -216,7 +217,8 @@ public class JasperModelFiller implements JasperFiller {
         CustomExpression customExpression = null;
 
         try {
-            customExpression = customExpressionClass.newInstance();
+            Constructor<? extends CustomExpression> constructor = customExpressionClass.getConstructor(String.class);
+            customExpression = constructor.newInstance(column.keypath());
         } catch (Exception exception) {
             throw new ReportProcessingException(exception);
         }
@@ -224,7 +226,7 @@ public class JasperModelFiller implements JasperFiller {
         columnBuilder.setColumnProperty(null);
         columnBuilder.setCustomExpression(customExpression);
 
-        EOEntity entity = column.model().baseEntity();
+        EOEntity entity = model.baseEntity();
 
         String classname = entity._attributeForPath(column.keypath()).className();
 
