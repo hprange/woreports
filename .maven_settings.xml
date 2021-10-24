@@ -17,6 +17,16 @@
             <enabled>true</enabled>
           </snapshots>
         </repository>
+        <repository>
+          <id>jaspersoft-third-party-artifacts</id>
+          <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
+          <releases>
+            <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
       </repositories>
       <pluginRepositories>
         <pluginRepository>
