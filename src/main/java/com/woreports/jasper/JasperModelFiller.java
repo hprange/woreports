@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Map;
 
@@ -20,6 +23,7 @@ import com.woreports.api.ReportColumn;
 import com.woreports.api.ReportModel;
 import com.woreports.api.ReportProcessingException;
 import com.woreports.custom.JasperReportColumnCustomizer;
+import com.woreports.custom.TemporalToDateConverter;
 import com.woreports.localization.LocalizerKeyGenerator;
 
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
@@ -48,6 +52,42 @@ import net.sf.jasperreports.engine.JasperPrint;
  * @author <a href="mailto:hprange@gmail.com">Henrique Prange</a>
  */
 public class JasperModelFiller implements JasperFiller {
+    /**
+     * Checks if the given class name is a temporal class, meaning that it represents a date, time, or duration using
+     * java.time.
+     *
+     * @param classname
+     *            The class name to check.
+     * @return True if the class name is a temporal class, false otherwise.
+     */
+    private static boolean isTemporal(String classname) {
+        return classname.startsWith("java.time");
+    }
+
+    /**
+     * Creates a custom expression for the given report column.
+     *
+     * @param column
+     *            The report column.
+     * @return A custom expression for the report column, or null if the column does not have a custom expression.
+     * @throws ReportProcessingException
+     *             If an error occurs while creating the custom expression.
+     */
+    private static CustomExpression customExpressionFor(ReportColumn column) throws ReportProcessingException {
+        Class<? extends CustomExpression> customExpressionClass = column.customExpressionClass();
+
+        if (customExpressionClass == null) {
+            return null;
+        }
+
+        try {
+            Constructor<? extends CustomExpression> constructor = customExpressionClass.getConstructor(String.class);
+            return constructor.newInstance(column.keypath());
+        } catch (Exception exception) {
+            throw new ReportProcessingException(exception);
+        }
+    }
+
     private final DynamicReportBuilder builder;
     private final Format format;
     private final ERXLocalizer localizer;
@@ -75,14 +115,16 @@ public class JasperModelFiller implements JasperFiller {
 
             if (NSTimestamp.class.getName().equals(classname)) {
                 classname = Date.class.getName();
-            }
-
-            if (ERXCryptoString.class.getSimpleName().equals(classname)) {
+            } else if (ERXCryptoString.class.getSimpleName().equals(classname)) {
                 classname = String.class.getName();
-            }
-
-            if (LocalDate.class.getSimpleName().equals(classname)) {
+            } else if (LocalDate.class.getSimpleName().equals(classname)) {
                 classname = LocalDate.class.getName();
+            } else if (LocalDateTime.class.getSimpleName().equals(classname)) {
+                classname = LocalDateTime.class.getName();
+            } else if (OffsetDateTime.class.getSimpleName().equals(classname)) {
+                classname = OffsetDateTime.class.getName();
+            } else if (ZonedDateTime.class.getSimpleName().equals(classname)) {
+                classname = ZonedDateTime.class.getName();
             }
 
             String columnTitle = titleForColumn(entity, column);
@@ -99,7 +141,19 @@ public class JasperModelFiller implements JasperFiller {
             }
 
             processColumnStyle(column, columnBuilder, classname);
-            processCustomExpression(model, column, columnBuilder, builder);
+
+            CustomExpression customExpression = customExpressionFor(column);
+
+            if (customExpression == null && isTemporal(classname)) {
+                customExpression = new TemporalToDateConverter(column.keypath());
+            }
+
+            if (customExpression != null) {
+                columnBuilder.setColumnProperty(null);
+                columnBuilder.setCustomExpression(customExpression);
+
+                builder.addField(column.keypath(), classname);
+            }
 
             AbstractColumn djColumn = null;
 
@@ -205,32 +259,6 @@ public class JasperModelFiller implements JasperFiller {
         }
 
         columnBuilder.setStyle(style);
-    }
-
-    private void processCustomExpression(ReportModel model, ReportColumn column, ColumnBuilder columnBuilder, DynamicReportBuilder reportBuilder) throws ReportProcessingException {
-        Class<? extends CustomExpression> customExpressionClass = column.customExpressionClass();
-
-        if (customExpressionClass == null) {
-            return;
-        }
-
-        CustomExpression customExpression = null;
-
-        try {
-            Constructor<? extends CustomExpression> constructor = customExpressionClass.getConstructor(String.class);
-            customExpression = constructor.newInstance(column.keypath());
-        } catch (Exception exception) {
-            throw new ReportProcessingException(exception);
-        }
-
-        columnBuilder.setColumnProperty(null);
-        columnBuilder.setCustomExpression(customExpression);
-
-        EOEntity entity = model.baseEntity();
-
-        String classname = entity._attributeForPath(column.keypath()).className();
-
-        reportBuilder.addField(column.keypath(), classname);
     }
 
     private String titleForColumn(EOEntity entity, ReportColumn column) {
