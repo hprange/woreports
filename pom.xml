@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.woreports</groupId>
 	<artifactId>woreports</artifactId>
-	<version>1.5.0-SNAPSHOT</version>
+	<version>1.5.0</version>
 	<packaging>jar</packaging>
 	<name>WOReports Framework</name>
 
@@ -141,7 +141,7 @@
 		<connection>scm:git:https://github.com/hprange/woreports.git</connection>
 		<url>scm:git:https://github.com/hprange/woreports.git</url>
 		<developerConnection>scm:git:https://github.com/hprange/woreports.git</developerConnection>
-	  <tag>HEAD</tag>
+	  <tag>woreports-1.5.0</tag>
   </scm>
 	
 	<distributionManagement>
