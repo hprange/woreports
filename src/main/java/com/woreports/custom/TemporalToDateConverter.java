@@ -55,14 +55,14 @@ public class TemporalToDateConverter implements CustomExpression {
                 throw new IllegalStateException(String.format("Expecting a %s, but got a %s.", TimeZone.class.getName(), timeZoneObj.getClass().getName()));
             }
             zone = ((TimeZone) timeZoneObj).toZoneId();
+        } else {
+            LOGGER.info("Using the Zone ID from the System may result in some inconsistencies.");
         }
 
         if (object instanceof LocalDate) {
             temporal = ((LocalDate) object).atStartOfDay(zone);
-            LOGGER.info("Using the Zone ID from the System may result in some inconsistencies.");
         } else if (object instanceof LocalDateTime) {
             temporal = ((LocalDateTime) object).atZone(zone);
-            LOGGER.info("Using the Zone ID from the System may result in some inconsistencies.");
         } else {
             temporal = (Temporal) object;
         }
