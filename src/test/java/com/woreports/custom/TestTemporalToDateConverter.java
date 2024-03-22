@@ -84,7 +84,7 @@ public class TestTemporalToDateConverter {
     }
 
     @Test
-    public void convertLocalDateToDateUsingZoneIdParameterWhenEvaluatingExpression() {
+    public void convertLocalDateToDateUsingTimeZoneParameterWhenEvaluatingExpression() {
         Map<String, Object> fields = new HashMap<>();
         fields.put("fieldName", LocalDate.of(2021, 11, 4));
 
