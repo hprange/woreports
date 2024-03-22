@@ -88,10 +88,10 @@ public class TestTemporalToDateConverter {
         Map<String, Object> fields = new HashMap<>();
         fields.put("fieldName", LocalDate.of(2021, 11, 4));
 
-        Map<String, Object> paraments = new HashMap<>();
-        paraments.put("REPORT_TIME_ZONE", TimeZone.getTimeZone("US/Eastern"));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("REPORT_TIME_ZONE", TimeZone.getTimeZone("US/Eastern"));
 
-        Object result = converter.evaluate(fields, emptyMap(), paraments);
+        Object result = converter.evaluate(fields, emptyMap(), parameters);
 
         assertThat(result, instanceOf(Date.class));
 
@@ -131,10 +131,10 @@ public class TestTemporalToDateConverter {
         Map<String, Object> fields = new HashMap<>();
         fields.put("fieldName", LocalDateTime.of(2021, 11, 4, 10, 56, 24));
 
-        Map<String, Object> paraments = new HashMap<>();
-        paraments.put("REPORT_TIME_ZONE", TimeZone.getTimeZone("US/Eastern"));
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("REPORT_TIME_ZONE", TimeZone.getTimeZone("US/Eastern"));
 
-        Object result = converter.evaluate(fields, emptyMap(), paraments);
+        Object result = converter.evaluate(fields, emptyMap(), parameters);
 
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("US/Eastern"));
         calendar.setTime((Date) result);
@@ -189,7 +189,7 @@ public class TestTemporalToDateConverter {
     }
 
     @Test
-    public void returnNullIfValueNullWhenEvalutatingExpression() throws Exception {
+    public void returnNullIfValueNullWhenEvaluatingExpression() throws Exception {
         Map<String, Object> fields = new HashMap<String, Object>();
         fields.put("fieldName", null);
 
@@ -221,16 +221,16 @@ public class TestTemporalToDateConverter {
     }
 
     @Test
-    public void throwExcepetionIfTimeZoneParameterIsNotATimeZoneWhenEvaluatingExpression() throws Exception {
+    public void throwExceptionIfTimeZoneParameterIsNotATimeZoneWhenEvaluatingExpression() throws Exception {
         Map<String, Object> fields = new HashMap<>();
         fields.put("fieldName", LocalDate.of(2021, 11, 4));
 
-        Map<String, Object> paraments = new HashMap<>();
-        paraments.put("REPORT_TIME_ZONE", "TimeZone");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("REPORT_TIME_ZONE", "TimeZone");
 
         thrown.expect(IllegalStateException.class);
         thrown.expectMessage(is("Expecting a java.util.TimeZone, but got a java.lang.String."));
 
-        converter.evaluate(fields, emptyMap(), paraments);
+        converter.evaluate(fields, emptyMap(), parameters);
     }
 }
