@@ -85,6 +85,8 @@ public class TestTemporalToDateConverter {
 
     @Test
     public void convertLocalDateToDateUsingTimeZoneParameterWhenEvaluatingExpression() {
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+
         Map<String, Object> fields = new HashMap<>();
         fields.put("fieldName", LocalDate.of(2021, 11, 4));
 
@@ -108,6 +110,8 @@ public class TestTemporalToDateConverter {
 
     @Test
     public void convertLocalDateTimeToDateWhenEvaluatingExpression() {
+        TimeZone.setDefault(TimeZone.getTimeZone("America/Sao_Paulo"));
+
         Map<String, Object> fields = new HashMap<>();
         fields.put("fieldName", LocalDateTime.of(2021, 11, 4, 10, 56, 24));
 
