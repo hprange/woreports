@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TimeZone;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -78,6 +79,29 @@ public class TestTemporalToDateConverter {
         assertThat(month(calendar), is(11));
         assertThat(day(calendar), is(4));
         assertThat(hour(calendar), is(0));
+        assertThat(minute(calendar), is(0));
+        assertThat(second(calendar), is(0));
+    }
+
+    @Test
+    public void convertLocalDateToDateUsingZoneIdParameterWhenEvaluatingExpression() {
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("fieldName", LocalDate.of(2021, 11, 4));
+
+        Map<String, Object> paraments = new HashMap<>();
+        paraments.put("REPORT_TIME_ZONE", TimeZone.getTimeZone("US/Eastern"));
+
+        Object result = converter.evaluate(fields, emptyMap(), paraments);
+
+        assertThat(result, instanceOf(Date.class));
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime((Date) result);
+
+        assertThat(year(calendar), is(2021));
+        assertThat(month(calendar), is(11));
+        assertThat(day(calendar), is(4));
+        assertThat(hour(calendar), is(1));
         assertThat(minute(calendar), is(0));
         assertThat(second(calendar), is(0));
     }
@@ -173,5 +197,19 @@ public class TestTemporalToDateConverter {
         thrown.expectMessage(is("Expecting a java.time.temporal.Temporal, but got a java.lang.String."));
 
         converter.evaluate(fields, emptyMap(), emptyMap());
+    }
+
+    @Test
+    public void throwExcepetionIfTimeZoneParameterIsNotATimeZoneWhenEvaluatingExpression() throws Exception {
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("fieldName", LocalDate.of(2021, 11, 4));
+
+        Map<String, Object> paraments = new HashMap<>();
+        paraments.put("REPORT_TIME_ZONE", "TimeZone");
+
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage(is("Expecting a java.util.TimeZone, but got a java.lang.String."));
+
+        converter.evaluate(fields, emptyMap(), paraments);
     }
 }

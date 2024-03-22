@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.temporal.Temporal;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.TimeZone;
 
 import ar.com.fdvs.dj.domain.CustomExpression;
 
@@ -41,7 +42,19 @@ public class TemporalToDateConverter implements CustomExpression {
         Temporal temporal = null;
 
         if (object instanceof LocalDate) {
-            temporal = ((LocalDate) object).atStartOfDay(ZoneId.systemDefault());
+            Object timeZoneObj = parameters.get("REPORT_TIME_ZONE");
+
+            if (timeZoneObj != null) {
+
+                if (!(timeZoneObj instanceof TimeZone)) {
+                    throw new IllegalStateException(String.format("Expecting a %s, but got a %s.", TimeZone.class.getName(), timeZoneObj.getClass().getName()));
+                }
+
+                temporal = ((LocalDate) object).atStartOfDay(((TimeZone) timeZoneObj).toZoneId());
+            } else {
+                temporal = ((LocalDate) object).atStartOfDay(ZoneId.systemDefault());
+            }
+
         } else if (object instanceof LocalDateTime) {
             temporal = ((LocalDateTime) object).atZone(ZoneId.systemDefault());
         } else {
