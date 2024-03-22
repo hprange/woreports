@@ -127,6 +127,27 @@ public class TestTemporalToDateConverter {
     }
 
     @Test
+    public void convertLocalDateTimeToDateUsingTimeZoneParameterWhenEvaluatingExpression() {
+        Map<String, Object> fields = new HashMap<>();
+        fields.put("fieldName", LocalDateTime.of(2021, 11, 4, 10, 56, 24));
+
+        Map<String, Object> paraments = new HashMap<>();
+        paraments.put("REPORT_TIME_ZONE", TimeZone.getTimeZone("US/Eastern"));
+
+        Object result = converter.evaluate(fields, emptyMap(), paraments);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime((Date) result);
+
+        assertThat(year(calendar), is(2021));
+        assertThat(month(calendar), is(11));
+        assertThat(day(calendar), is(4));
+        assertThat(hour(calendar), is(11));
+        assertThat(minute(calendar), is(56));
+        assertThat(second(calendar), is(24));
+    }
+
+    @Test
     public void convertOffsetDateTimeToDateWhenEvaluatingExpression() {
         Map<String, Object> fields = new HashMap<>();
         ZoneOffset offset = ZoneId.systemDefault().getRules().getOffset(Instant.now());
