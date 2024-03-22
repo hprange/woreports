@@ -56,7 +56,7 @@ public class TemporalToDateConverter implements CustomExpression {
             }
             zone = ((TimeZone) timeZoneObj).toZoneId();
         } else {
-            LOGGER.info("Using the Zone ID from the System may result in some inconsistencies.");
+            LOGGER.warn("No time zone was configured for the report. Using the system's default time zone may lead to date/time inconsistencies.");
         }
 
         if (object instanceof LocalDate) {
