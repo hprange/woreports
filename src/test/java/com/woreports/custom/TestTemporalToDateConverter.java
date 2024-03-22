@@ -95,13 +95,13 @@ public class TestTemporalToDateConverter {
 
         assertThat(result, instanceOf(Date.class));
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("US/Eastern"));
         calendar.setTime((Date) result);
 
         assertThat(year(calendar), is(2021));
         assertThat(month(calendar), is(11));
         assertThat(day(calendar), is(4));
-        assertThat(hour(calendar), is(1));
+        assertThat(hour(calendar), is(0));
         assertThat(minute(calendar), is(0));
         assertThat(second(calendar), is(0));
     }
@@ -136,13 +136,13 @@ public class TestTemporalToDateConverter {
 
         Object result = converter.evaluate(fields, emptyMap(), paraments);
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("US/Eastern"));
         calendar.setTime((Date) result);
 
         assertThat(year(calendar), is(2021));
         assertThat(month(calendar), is(11));
         assertThat(day(calendar), is(4));
-        assertThat(hour(calendar), is(11));
+        assertThat(hour(calendar), is(10));
         assertThat(minute(calendar), is(56));
         assertThat(second(calendar), is(24));
     }
